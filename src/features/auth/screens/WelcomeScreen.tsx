@@ -1,14 +1,11 @@
-import { Pressable, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import Logo from "../../../components/Logo";
+import { AuthButtons } from "../components/AuthButtons";
+import { useRouter } from "expo-router";
 
-/*
-TODO:
-
-- Split components slightly, maybe a custom button component?
-- Get the buttons working for those 2 specific pages (register and login)
-
-*/
 export default function WelcomeScreen() {
+    const authRouter = useRouter();
+
     return (
         <View className="flex-1 p-10 justify-center gap-5">
             <View className="items-center gap-5">
@@ -24,66 +21,10 @@ export default function WelcomeScreen() {
                     </Text>
                 </View>
             </View>
-
-            <View className="mt-16 gap-6">
-                <Pressable
-                    onPress={() => console.log("take me to register page yes")}
-                    android_ripple={{
-                        color: "rgba(0,0,0,0.12)",
-                        foreground: true,
-                    }}
-                    className="theme-bg-color p-5 items-center rounded-3xl overflow-hidden w-sm self-center"
-                    style={({ pressed }) => ({
-                        transform: [{ scale: pressed ? 0.98 : 1 }],
-                        opacity: pressed ? 0.98 : 1,
-                    })}
-                >
-                    {({ pressed }) => (
-                        <>
-                            <Text className="font-bold">Get started!</Text>
-                            <View
-                                pointerEvents="none"
-                                style={{
-                                    position: "absolute",
-                                    inset: 0,
-                                    backgroundColor: "black",
-                                    opacity: pressed ? 0.08 : 0,
-                                }}
-                            />
-                        </>
-                    )}
-                </Pressable>
-
-                <Pressable
-                    onPress={() => console.log("take me to login page yooo")}
-                    android_ripple={{
-                        color: "rgba(0,0,0,0.08)",
-                        foreground: true,
-                    }}
-                    className="bg-gray-200 p-5 items-center rounded-3xl overflow-hidden w-sm self-center"
-                    style={({ pressed }) => ({
-                        transform: [{ scale: pressed ? 0.98 : 1 }],
-                        opacity: pressed ? 0.98 : 1,
-                    })}
-                >
-                    {({ pressed }) => (
-                        <>
-                            <Text className="font-bold">
-                                Already have an account?
-                            </Text>
-                            <View
-                                pointerEvents="none"
-                                style={{
-                                    position: "absolute",
-                                    inset: 0,
-                                    backgroundColor: "black",
-                                    opacity: pressed ? 0.06 : 0,
-                                }}
-                            />
-                        </>
-                    )}
-                </Pressable>
-            </View>
+            <AuthButtons
+                onRegister={() => authRouter.push("/(auth)/register")}
+                onLogin={() => authRouter.push("/(auth)/login")}
+            />
         </View>
     );
 }
