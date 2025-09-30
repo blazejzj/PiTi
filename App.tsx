@@ -1,12 +1,11 @@
 import "./global.css";
 import { Text, View } from "react-native";
+import WelcomeScreen from "./src/features/auth/screens/WelcomeScreen";
 
 export default function App() {
     return (
-        <View className="flex-1 items-center justify-center bg-white">
-            <Text className="text-4xl font-bold text-blue-500">
-                Welcome to friggin' PiTi!
-            </Text>
+        <View className="w-screen h-screen bg-white">
+            <WelcomeScreen />
         </View>
     );
 }
