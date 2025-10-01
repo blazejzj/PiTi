@@ -15,6 +15,8 @@ type ButtonProps = Omit<PressableProps, "style" | "children"> & {
     accessibilityLabel?: string;
     /* Nativewind (tailwidn) classes if you wanna style it more */
     className?: string;
+    /* Style the text inside the button with nativewind classes*/
+    textClassName?: string;
 };
 
 export default function Button({
@@ -25,6 +27,7 @@ export default function Button({
     accessibilityLabel,
     disabled = false,
     onPress,
+    textClassName,
     ...rest // <-- all the other normal Pressable props for example onLongPress
 }: ButtonProps) {
     // base look for all buttons
@@ -68,7 +71,9 @@ export default function Button({
         >
             {({ pressed }) => (
                 <>
-                    <Text className="font-bold">{title}</Text>
+                    <Text className={`font-bold ${textClassName}`}>
+                        {title}
+                    </Text>
                     <View
                         pointerEvents="none"
                         style={{

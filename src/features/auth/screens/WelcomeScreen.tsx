@@ -7,7 +7,7 @@ export default function WelcomeScreen() {
     const authRouter = useRouter();
 
     return (
-        <View className="flex-1 p-10 justify-center gap-5">
+        <View className="flex-1 p-10 p-safe justify-center gap-5">
             <View className="items-center gap-5">
                 <Logo />
                 <View className="items-center gap-5">
