@@ -1,15 +1,35 @@
 {
-  "extends": "expo/tsconfig.base",
   "compilerOptions": {
+    "target": "ES2020",
+    "module": "ESNext",
+    "lib": [
+      "ES2020"
+    ],
+    "jsx": "react-jsx",
+    "allowJs": false,
     "strict": true,
-    "jsx": "react-jsx"
+    "moduleResolution": "Bundler",
+    "resolveJsonModule": true,
+    "types": [
+      "jest",
+      "react",
+      "react-native",
+      "node"
+    ],
+    "skipLibCheck": true,
+    "noEmit": true
   },
+  "exclude": [
+    "node_modules",
+    "babel.config.js",
+    "metro.config.js"
+  ],
   "include": [
     "**/*.ts",
     "**/*.tsx",
+    "**/*.d.ts",
+    "jest.setup.ts",
     "nativewind-env.d.ts"
   ],
-  "exclude": [
-    "node_modules"
-  ]
+  "extends": "expo/tsconfig.base"
 }
