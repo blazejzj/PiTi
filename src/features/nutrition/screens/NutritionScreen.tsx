@@ -8,7 +8,7 @@ import MealItem from '../components/MealItem';
 import { Meal } from '../../../types/nutrition';
 
 
-export const NutritionScreen = () => {
+export default function NutritionScreen() {
     const router = useRouter();
     
     const [meals, setMeals] = useState<Meal[]>(DummyMeals);
@@ -109,5 +109,3 @@ const MacroDisplay = ({ label, value }: { label: string, value: string }) => (
         <Text className="text-xs text-neutral-500">{label}</Text>
     </View>
 );
-
-export default NutritionScreen;
