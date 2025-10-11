@@ -9,7 +9,7 @@ type MealItemProps = {
 export default function MealItem({ meal }: MealItemProps) {
     return (
     
-        <View className="py-2">
+        <View className="py-2 px-5 bg-white">
             <View className="flex-row justify-between items-center mb-1">
                 <Text className="text-xl font-bold">{meal.name}</Text>
                 <Text className="text-xl font-bold">{meal.totalKcal}kcal</Text>

@@ -46,25 +46,25 @@ export default function NutritionScreen() {
                         
                         <View className="px-5 pt-3 mb-6 items-center">
                             <Text className="text-xl font-bold mb-1">Monday 1. September</Text>
-                            <Text className="text-xl font-bold mb-3">{currentKcal}/{kcalGoal} kcal</Text>
-                            <View className="h-2 bg-gray-200 rounded-full">
+                            <Text className="text-xl mb-3">{currentKcal}/{kcalGoal} kcal</Text>
+                            <View className="h-2 bg-gray-200 rounded-full w-full">
                                 <View 
                                     className="h-2 bg-green-500 rounded-full" 
                                     style={{ width: `${Math.min(100, (currentKcal / kcalGoal) * 100)}%` }} 
                                 />
                             </View>
                         </View>
-                        <View className="flex-row justify-between px-5 mb-8">
+                        <View className="flex-row justify-between px-8 mb-8">
                             <MacroDisplay label="Carbs" value={`${totalCarbs}g`} />
                             <MacroDisplay label="Protein" value={`${totalProtein}g`} />
                             <MacroDisplay label="Fat" value={`${totalFat}g`} />
                         </View>
 
-                        <ScrollView horizontal showsHorizontalScrollIndicator={false} className="mb-8">
+                        <ScrollView horizontal showsHorizontalScrollIndicator={false} className="mb-8 px-5">
                             {WEEKDAYS.map(day => (
                                 <Pressable 
                                     key={day} 
-                                    className={`px-4 py-2 rounded-xl mr-3 ${day === selectedDay ? 'bg-green-500' : 'bg-gray-100'}`}
+                                    className={`px-4 py-2 rounded-xl mr-2 ${day === selectedDay ? 'bg-green-500' : 'bg-gray-100'}`}
                                 >
                                     <Text className={day === selectedDay ? 'text-white font-bold' : 'text-gray-700 font-semibold'}>
                                         {day}
@@ -72,19 +72,11 @@ export default function NutritionScreen() {
                                 </Pressable>
                             ))}
                         </ScrollView>
-
-                        <View className="mb-4 pt-4 pb-2 items-center border-t border-gray-200 mx-5">
-                            <Text className="text-base font-bold">Monday 1. September</Text>
-                            <View className="flex-row gap-4 mt-1 text-sm">
-                                <Text className="text-gray-500">So far: {currentKcal} kcal</Text>
-                                <Text className="text-gray-500">Goal: {kcalGoal} kcal</Text>
-                        </View>
-                        </View>
                     </View>
                 )}
                 ItemSeparatorComponent={() => <View className="h-4" />}
 
-                        
+            
 
                 // footer - "everything after meals"  - button to add meal
                 ListFooterComponent={() => (
