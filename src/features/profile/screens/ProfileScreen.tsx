@@ -80,6 +80,11 @@ export default function ProfileScreen() {
                 </View>
 
                 {/* Kroppsinfo-section goes here */}
+                <View className="bg-amber-300">
+                    <Text className="my-2 text-center text-lg font-semibold">
+                        Kroppsinfo
+                    </Text>
+                </View>
             </ScrollView>
         </View>
     );
