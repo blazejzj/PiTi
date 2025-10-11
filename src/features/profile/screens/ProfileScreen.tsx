@@ -26,6 +26,13 @@ export default function ProfileScreen() {
                         <Text className="text-lg font-semibold color-white">
                             {userName}
                         </Text>
+
+                        <View className="flex-row justify between w-full mt-5">
+                            <View className="flex-1 items-center">
+                                <Text className="font-bold">100 kg</Text>
+                                <Text className="text-neutral-600">Vekt</Text>
+                            </View>
+                        </View>
                     </View>
                 </View>
             </ScrollView>
