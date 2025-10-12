@@ -4,9 +4,9 @@ import { Text, View, Pressable, ScrollView } from "react-native";
 export default function ProfileScreen() {
     const userName = "Ola Nordamnn";
     return (
-        <View className="flex-1 p-safe">
+        <View className="flex-1 p-safe bg-white">
             {/* Top bar heeere - Gims, good music to code to. Allez le bleu. */}
-            <View className="flex-row justify-between items-center px-5 py-4 bg-amber-200">
+            <View className="flex-row justify-between items-center px-5 py-4">
                 <Pressable onPress={() => router.back()}>
                     <Text className="text-2xl">backBtn</Text>
                 </Pressable>
@@ -21,9 +21,9 @@ export default function ProfileScreen() {
             <ScrollView>
                 {/* ScrollView vs FlatList? Profile page is relatively short, not THAT many elements to be rendered. Need for lazy render with Flatlist? Je ne sais pas. */}
                 <View className="">
-                    <View className="items-center bg-amber-300 rounded-2xl py-3 mt-2">
-                        <View className="w-24 h-24 rounded-full bg-red-500 mb-3" />
-                        <Text className="text-lg font-semibold color-white">
+                    <View className="items-center bg-white-300 rounded-2xl py-3 mt-2">
+                        <View className="w-24 h-24 rounded-full bg-neutral-400 mb-3" />
+                        <Text className="text-lg font-semibold">
                             {userName}
                         </Text>
 
@@ -50,12 +50,12 @@ export default function ProfileScreen() {
                 </View>
 
                 {/* Personlige mål section hereee*/}
-                <View className="bg-amber-300">
+                <View className="bg-white-300">
                     <Text className="my-2 text-center text-lg font-semibold">
                         Personlige mål
                     </Text>
 
-                    <View className="gap-4 bg-amber-300">
+                    <View className="gap-4 bg-white-300">
                         {/* VEktmål pill */}
                         <View className="bg-neutral-200 rounded-3xl p-4 mx-10">
                             <Text className="font-semibold mb-1 text-center">
@@ -80,13 +80,13 @@ export default function ProfileScreen() {
                 </View>
 
                 {/* Kroppsinfo-section goes here */}
-                <View className="bg-amber-300 mt-4">
+                <View className="bg-white-300 mt-4">
                     <Text className=" mb-4 text-center text-lg font-semibold">
                         Kroppsinfo
                     </Text>
 
                     {/* Row 1 - vekt og alder */}
-                    <View className="flex-row justify-center gap-20 bg-amber-300">
+                    <View className="flex-row justify-center gap-20 bg-white-300">
                         <View className="bg-neutral-200 rounded-4xl px-8 py-3 gap-1 items-center">
                             <Text className="font-semibold">Vekt</Text>
                             <Text className="text-neutral-600">80kg</Text>
@@ -98,7 +98,7 @@ export default function ProfileScreen() {
                     </View>
 
                     {/* Row 2 - BMI og */}
-                    <View className="flex-row justify-center gap-20 mt-3 bg-amber-">
+                    <View className="flex-row justify-center gap-20 mt-3 bg-white-">
                         <View className="bg-neutral-200 rounded-4xl px-8 py-3 gap-1 items-center">
                             <Text className="font-semibold">BMI</Text>
                             <Text className="text-neutral-600">22.6</Text>
@@ -113,7 +113,7 @@ export default function ProfileScreen() {
 
                 {/* Innstillinger her */}
 
-                <View className="bg-amber-300 mt-4 pb-6">
+                <View className="bg-white-300 mt-4 pb-6">
                     <Text className=" mb-4 text-center text-lg font-semibold">
                         Innstillinger
                     </Text>
