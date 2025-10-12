@@ -97,7 +97,7 @@ export default function ProfileScreen() {
                         </View>
                     </View>
 
-                    {/* Row 2 - BMI og hoyde*/}
+                    {/* Row 2 - BMI og */}
                     <View className="flex-row justify-center gap-20 mt-3 bg-amber-">
                         <View className="bg-neutral-200 rounded-4xl px-8 py-3 gap-1 items-center">
                             <Text className="font-semibold">BMI</Text>
@@ -109,6 +109,38 @@ export default function ProfileScreen() {
                         </View>
                     </View>
                     <View className="h-px w-full bg-neutral-950 mt-4" />
+                </View>
+
+                {/* Innstillinger her */}
+
+                <View className="bg-amber-300 mt-4 pb-6">
+                    <Text className=" mb-4 text-center text-lg font-semibold">
+                        Innstillinger
+                    </Text>
+
+                    <View className="gap-4 px-10">
+                        <View className="bg-neutral-200 rounded-4xl">
+                            <Text className="font-semibold text-center py-5">
+                                Påminnselser
+                            </Text>
+                        </View>
+                        <View className="bg-neutral-200 rounded-4xl">
+                            <Text className="font-semibold text-center py-5">
+                                Meldinger
+                            </Text>
+                        </View>
+
+                        <View className="bg-neutral-200 rounded-4xl">
+                            <Text className="font-semibold text-center py-5">
+                                Eksporter Data
+                            </Text>
+                        </View>
+                        <View className="bg-neutral-200 rounded-4xl">
+                            <Text className="font-semibold text-center py-5">
+                                Personvern
+                            </Text>
+                        </View>
+                    </View>
                 </View>
             </ScrollView>
         </View>
