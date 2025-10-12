@@ -1,6 +1,6 @@
 import { ActiveWorkout, TrainingStats, ExerciseDisplayData } from "../types/training";
 
-export const DUMMY_ACTIVE_WORKOUT: ActiveWorkout = {
+export const DummyActiveWorkout: ActiveWorkout = {
     name: "Leg Day", 
     status: "active", 
     duration: "x 32:15",
@@ -11,9 +11,16 @@ export const DUMMY_ACTIVE_WORKOUT: ActiveWorkout = {
     ]
 };
 
-export const DUMMY_STATS_HEADER: TrainingStats = {
+export const DummyStatsHeader: TrainingStats = {
     currentDate: "Monday 1. September",
     sessionsThisWeek: 3,
     averageTimeMinutes: 45,
 };
 
+
+export const DummyLastSession = {
+    name: "Pull day",
+    exercisesCompleted: 6,
+    day: "Saturday",
+    details: "6 exercises over 45 min", 
+};
