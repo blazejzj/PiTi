@@ -55,7 +55,7 @@ export default function ProfileScreen() {
                         Personlige mål
                     </Text>
 
-                    <View className="gap-4 bg-amber-500">
+                    <View className="gap-4 bg-amber-300">
                         {/* VEktmål pill */}
                         <View className="bg-neutral-200 rounded-3xl p-4 mx-10">
                             <Text className="font-semibold mb-1 text-center">
@@ -80,10 +80,35 @@ export default function ProfileScreen() {
                 </View>
 
                 {/* Kroppsinfo-section goes here */}
-                <View className="bg-amber-300">
-                    <Text className="my-2 text-center text-lg font-semibold">
+                <View className="bg-amber-300 mt-4">
+                    <Text className=" mb-4 text-center text-lg font-semibold">
                         Kroppsinfo
                     </Text>
+
+                    {/* Row 1 - vekt og alder */}
+                    <View className="flex-row justify-center gap-20 bg-amber-300">
+                        <View className="bg-neutral-200 rounded-4xl px-8 py-3 gap-1 items-center">
+                            <Text className="font-semibold">Vekt</Text>
+                            <Text className="text-neutral-600">80kg</Text>
+                        </View>
+                        <View className="bg-neutral-200 rounded-4xl px-8 py-3 gap-1 items-center">
+                            <Text className="font-semibold">Alder</Text>
+                            <Text className="text-neutral-600">45 år</Text>
+                        </View>
+                    </View>
+
+                    {/* Row 2 - BMI og hoyde*/}
+                    <View className="flex-row justify-center gap-20 mt-3 bg-amber-">
+                        <View className="bg-neutral-200 rounded-4xl px-8 py-3 gap-1 items-center">
+                            <Text className="font-semibold">BMI</Text>
+                            <Text className="text-neutral-600">22.6</Text>
+                        </View>
+                        <View className="bg-neutral-200 rounded-4xl px-8 py-3 gap-1 items-center">
+                            <Text className="font-semibold">Høyde</Text>
+                            <Text className="text-neutral-600">190 cm</Text>
+                        </View>
+                    </View>
+                    <View className="h-px w-full bg-neutral-950 mt-4" />
                 </View>
             </ScrollView>
         </View>
