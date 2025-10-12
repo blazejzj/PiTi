@@ -8,13 +8,13 @@ export default function ProfileScreen() {
             {/* Top bar heeere - Gims, good music to code to. Allez le bleu. */}
             <View className="flex-row justify-between items-center px-5 py-4">
                 <Pressable onPress={() => router.back()}>
-                    <Text className="text-2xl">backBtn</Text>
+                    <Text className="text-2xl theme-bg-color">backBtn</Text>
                 </Pressable>
                 <Text className="text-2xl font-bold">Profil</Text>
                 <Pressable
                     onPress={() => console.log("Pressed hamburger-meny")}
                 >
-                    <Text className="text-2xl">hmbgBtn</Text>
+                    <Text className="text-2xl theme-bg-color">hmbgBtn</Text>
                 </Pressable>
             </View>
 
