@@ -21,6 +21,9 @@ export default function AddTrainingSessionScreen() {
         console.log("Form Data Submitted:", data);
         router.back(); 
     };
+    const handleNavigateToAddExercise = () => {
+    router.push('/training/addExercise'); 
+};
 
     return (
         <View className="flex-1 bg-white px-5">
@@ -61,7 +64,7 @@ export default function AddTrainingSessionScreen() {
 
             
                 <Pressable
-                    onPress={() => console.log("Gonna navigate to Add Exercise screen")}
+                    onPress={handleNavigateToAddExercise}
                     className= "w-full rounded-xl py-4 border-2 border-green-500 bg-white mb-10 items-center"
                 >
                     <Text className="text-md font-medium text-black">+ Add Exercises / Sets</Text>
