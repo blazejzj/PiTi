@@ -1,4 +1,6 @@
-import { View, Text, ScrollView, Platform, Pressable } from "react-native";
+import { View, Text, ScrollView, Platform, Pressable} from "react-native";
+import Button from '../../../components/Button'; 
+import { useRouter } from "expo-router";
 import { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { DailyStatsHeader } from "../components/DailyStatsHeader";
@@ -6,6 +8,7 @@ import { ActiveWorkoutCard } from "../components/ActiveWorkoutCard";
 import { DummyActiveWorkout,DummyLastSession, DummyStatsHeader } from "../../../lib/dummyDataTraining";
 
 export default function TrainingScreen() {
+    const router = useRouter();
     const [activeStatus, setActiveStatus] = useState<'active' | 'paused'>(DummyActiveWorkout.status === 'active' ? 'active' : 'paused');
     
     const handleTogglePause = () => {
@@ -17,6 +20,10 @@ export default function TrainingScreen() {
     };
 
     const averageTimeString = `${DummyStatsHeader.averageTimeMinutes}min`;
+
+    const handleAddSession = () => {
+        router.push('/training/addTrainingSession'); 
+    };
 
     return (
         <SafeAreaView className="flex-1 bg-white">
@@ -52,26 +59,14 @@ export default function TrainingScreen() {
                         <Text className="text-sm font-semibold text-black">See all history</Text>
                     </Pressable>
                 </View>
-
-                <View className="mt-8 mb-10 p-4 border border-gray-200 rounded-xl bg-gray-50">
-                    <Text className="text-xl font-bold mb-3 text-neutral-800">Predefined Programs</Text>
-                    
-                    <View className="mb-4">
-                        <Text className="text-lg font-semibold text-neutral-800">Full Body</Text>
-                        <Text className="text-sm text-neutral-600">Cardio • 3x/week</Text>
-                        <Pressable className="mt-2 py-2 bg-green-500 rounded-lg items-center w-24">
-                            <Text className="text-sm font-bold text-white">Use Program</Text>
-                        </Pressable>
-                    </View>
-                    
-                    <View>
-                        <Text className="text-lg font-semibold text-neutral-800">Core</Text>
-                        <Text className="text-sm text-neutral-600">Strength • 3x/week</Text>
-                        <Pressable className="mt-2 py-2 bg-green-500 rounded-lg items-center w-24">
-                            <Text className="text-sm font-bold text-white">Use Program</Text>
-                        </Pressable>
-                    </View>
-                </View>
+                <View className="mt-6" />
+                <Button
+                            title="+ Add session"
+                            variant="primary" 
+                            onPress={handleAddSession}
+                            className="w-full rounded-xl" 
+                            textClassName="text-lg font-bold text-white" 
+                        />
 
             </ScrollView>
         </SafeAreaView>
