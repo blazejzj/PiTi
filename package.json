@@ -21,6 +21,7 @@
         "@hookform/resolvers": "5.2.2",
         "appwrite": "20.1.0",
         "expo": "54.0.13",
+        "expo-dev-client": "~6.0.15",
         "expo-image": "3.0.9",
         "expo-router": "~6.0.11",
         "expo-status-bar": "3.0.8",
