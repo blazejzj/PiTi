@@ -19,7 +19,6 @@ export default function ProfileScreen() {
             </View>
 
             <ScrollView>
-                {/* ScrollView vs FlatList? Profile page is relatively short, not THAT many elements to be rendered. Need for lazy render with Flatlist? Je ne sais pas. */}
                 <View className="">
                     <View className="items-center bg-white-300 rounded-2xl py-3 mt-2">
                         <View className="w-24 h-24 rounded-full bg-neutral-400 mb-3" />
@@ -49,7 +48,7 @@ export default function ProfileScreen() {
                     </View>
                 </View>
 
-                {/* Personlige mål section hereee*/}
+                {/* Personlige mål section here*/}
                 <View className="bg-white-300">
                     <Text className="my-2 text-center text-lg font-semibold">
                         Personlige mål

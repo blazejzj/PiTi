@@ -26,14 +26,6 @@ export default function WelcomeScreen() {
                 onRegister={() => authRouter.push("/(auth)/register")}
                 onLogin={() => authRouter.push("/(auth)/login")}
             />
-
-            {/* Dev only button to route to profile screen so i can see hot reload in action plxz*/}
-            <Pressable
-                onPress={() => authRouter.replace("/(home)/profile")}
-                style={{ padding: 10, borderRadius: 8, borderWidth: 1 }}
-            >
-                <Text>Dev: Open Profiel</Text>
-            </Pressable>
         </View>
     );
 }
