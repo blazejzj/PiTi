@@ -1,6 +1,3 @@
-/*NB - denne er akkurat det samme som FormInput.tsx i features/auth/components/FormiInput
- - tester noe,tror den kan være globalt men vil ikke flytte selve fila og sure med andre sin kode*/
-
 import { useState } from "react";
 import { Controller, Control } from "react-hook-form";
 import { Text, TextInput, TextInputProps, View } from "react-native";
