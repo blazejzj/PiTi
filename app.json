@@ -1,20 +1,31 @@
 {
-    "expo": {
-        "name": "PiTi",
-        "slug": "PiTi",
-        "version": "1.0.0",
-        "orientation": "portrait",
-        "userInterfaceStyle": "light",
-        "newArchEnabled": true,
-        "ios": {
-            "supportsTablet": true,
-            "bundleIdentifier": "com.grouptwo.piti"
-        },
-        "android": {
-            "package": "com.grouptwo.piti",
-            "edgeToEdgeEnabled": true,
-            "predictiveBackGestureEnabled": false
-        },
-        "plugins": ["expo-router"]
+  "expo": {
+    "name": "PiTi",
+    "slug": "PiTi",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.grouptwo.piti",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
+    },
+    "android": {
+      "package": "com.grouptwo.piti",
+      "edgeToEdgeEnabled": true,
+      "predictiveBackGestureEnabled": false
+    },
+    "plugins": [
+      "expo-router"
+    ],
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "8ad4a847-5229-4be9-b30d-558ad57d756a"
+      }
     }
+  }
 }
