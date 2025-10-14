@@ -19,6 +19,7 @@ export default function TrainingScreen() {
         });
     };
 
+    
     const averageTimeString = `${DummyStatsHeader.averageTimeMinutes}min`;
 
     const handleAddSession = () => {

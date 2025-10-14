@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, Pressable, Platform } from 'react-native';
+import { View, Text, ScrollView, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useForm, Control } from "react-hook-form";
 import Button from '../../../components/Button';
@@ -24,21 +24,16 @@ export default function AddExerciseScreen() {
     };
 
     return (
-        <View className="lex-1 bg-white px-6">
+        <View className="flex-1 bg-white px-6">
             <ScrollView 
                 className="flex-1 p-5"
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={{ paddingBottom: Platform.OS === 'ios' ? 40 : 20 }}
                 keyboardShouldPersistTaps="handled"
             >
-                <View className="flex-row items-center mb-6">
-                    <Pressable onPress={() => router.back()} className="mr-4">
-                        <Text className="text-xl text-blue-600">←</Text>
-                    </Pressable>
-                    <Text className="text-2xl font-bold text-neutral-800">Add New Exercise</Text>
-                </View>
+               
                 
-                <Text className="text-xl font-bold text-neutral-800 mb-4">Manual Exercise Entry</Text>
+                <Text className="text-xl font-bold text-neutral-800 mb-9">Manual Exercise Entry</Text>
 
                 <FormInput
                     control={control as Control<AddExerciseForm>}
@@ -88,7 +83,6 @@ export default function AddExerciseScreen() {
                     textClassName="text-lg font-bold text-white" 
                 />
 
-                <View style={{ height: 100 }} /> 
             </ScrollView>
         </View>
     );

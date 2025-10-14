@@ -3,7 +3,6 @@ import { useRouter } from 'expo-router';
 import { useForm, Control } from "react-hook-form";
 import Button from '../../../components/Button'; 
 import FormInput from '../../../components/FormInput'; 
-import { useState } from 'react';
 
 type AddWorkoutForm = {
     workoutName: string;
@@ -19,6 +18,7 @@ export default function AddTrainingSessionScreen() {
     
     const handleSaveSession = (data: AddWorkoutForm) => {
         console.log("Form Data Submitted:", data);
+        //TODO: Save the data to backend/state 
         router.back(); 
     };
     const handleNavigateToAddExercise = () => {
