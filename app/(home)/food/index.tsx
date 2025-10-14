@@ -1,9 +1,3 @@
-import { View, Text } from "react-native";
+import NutritionScreen from "../../../src/features/nutrition/screens/NutritionScreen";
 
-export default function FoodIndex() {
-    return (
-        <View>
-            <Text>Food tab</Text>
-        </View>
-    );
-}
+export default NutritionScreen;
