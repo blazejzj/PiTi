@@ -1,3 +1,4 @@
+import { Pressable } from "react-native";
 import { Text, View } from "react-native";
 import Logo from "../../../components/Logo";
 import { AuthButtons } from "../components/AuthButtons";

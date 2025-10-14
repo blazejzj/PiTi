@@ -65,3 +65,15 @@ temp/
 # For example, you might ignore documentation or test files that are not needed for the build
 # /docs
 # /tests
+node_modules
+
+# Metro / cache (sometimes created outside node_modules)
+/.cache/
+.expo/*
+.expo-shared/*
+
+# Jest cache
+.jest/
+
+# Misc
+*.tsbuildinfo
