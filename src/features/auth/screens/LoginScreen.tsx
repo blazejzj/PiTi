@@ -120,6 +120,7 @@ export default function LoginScreen() {
                         onPress={handleLogin}
                         textClassName="text-lg"
                         className="w-full rounded-2xl py-4"
+                        testID="login-btn"
                     />
                     <View className="flex-row justify-center items-center">
                         <Text className="text-lg text-neutral-700">

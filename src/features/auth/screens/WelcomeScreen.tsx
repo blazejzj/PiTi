@@ -3,9 +3,30 @@ import { Text, View } from "react-native";
 import Logo from "../../../components/Logo";
 import { AuthButtons } from "../components/AuthButtons";
 import { useRouter } from "expo-router";
+import { useEffect, useState } from "react";
+import { account } from "../../../services/appwrite/appwrite";
 
 export default function WelcomeScreen() {
-    const authRouter = useRouter();
+    const router = useRouter();
+    const [checkingSession, setCheckingSession] = useState(true);
+
+    useEffect(() => {
+        const checkSession = async () => {
+            try {
+                const currentUser = await account.get();
+                if (currentUser) {
+                    router.replace("/(home)");
+                    return;
+                }
+            } catch {
+                // no active session -> normal login flow
+            } finally {
+                setCheckingSession(false);
+            }
+        };
+
+        checkSession();
+    }, []);
 
     return (
         <View className="flex-1 p-10 p-safe justify-center gap-5">
@@ -23,8 +44,8 @@ export default function WelcomeScreen() {
                 </View>
             </View>
             <AuthButtons
-                onRegister={() => authRouter.push("/(auth)/register")}
-                onLogin={() => authRouter.push("/(auth)/login")}
+                onRegister={() => router.push("/(auth)/register")}
+                onLogin={() => router.push("/(auth)/login")}
             />
         </View>
     );
