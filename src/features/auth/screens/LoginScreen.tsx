@@ -4,6 +4,12 @@ import Button from "../../../components/Button";
 import { useRouter } from "expo-router";
 import FormInput from "../components/FormInput";
 import { account } from "../../../services/appwrite/appwrite";
+import {
+    ensureNoActiveSession,
+    getCurrentUserSafely,
+} from "../../../services/appwrite/authGuard";
+import { toHumanError } from "../../../utils/humanError";
+import Toast from "react-native-toast-message";
 
 type FormInputs = {
     emailAdress: string;
@@ -19,18 +25,37 @@ export default function LoginScreen() {
 
     const onSubmit = async (data: any) => {
         try {
-            const newSession = await account.createEmailPasswordSession({
-                email: data.emailAdress,
-                password: data.password,
+            const email = String(data.emailAdress || "")
+                .trim()
+                .toLowerCase();
+            const password = String(data.password || "");
+
+            const existing = await getCurrentUserSafely();
+            if (existing) {
+                Toast.show({
+                    type: "success",
+                    text1: "Welcome back!",
+                });
+                router.replace("/(home)");
+                return;
+            }
+
+            await ensureNoActiveSession();
+
+            await account.createEmailPasswordSession({
+                email,
+                password,
             });
-            console.log(`logging in test ${newSession}`);
 
-            const user = await account.get();
-            console.log(`user that's now logged in is ${user}`);
-
-            router.replace("/(home)"); // TO DO THIS HAS TO BBE CHANGED TO TAKE USER SOMEWHERE
+            await account.get();
+            router.replace("/(home)");
         } catch (err) {
-            console.log(`logging error happend ${err}`); // TODO Better errors
+            const humanErr = toHumanError(err);
+            Toast.show({
+                type: "error",
+                text1: humanErr.title,
+                text2: humanErr.message,
+            });
         }
     };
 
@@ -38,7 +63,6 @@ export default function LoginScreen() {
     const handleGoRegister = () => router.replace("/(auth)/register");
 
     const handleLogin = handleSubmit((data) => {
-        console.log("testing login");
         onSubmit(data);
     });
 
@@ -96,6 +120,7 @@ export default function LoginScreen() {
                         onPress={handleLogin}
                         textClassName="text-lg"
                         className="w-full rounded-2xl py-4"
+                        testID="login-btn"
                     />
                     <View className="flex-row justify-center items-center">
                         <Text className="text-lg text-neutral-700">

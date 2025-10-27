@@ -5,6 +5,9 @@ import { useRouter } from "expo-router";
 import FormInput from "../components/FormInput";
 import { ID } from "appwrite";
 import { account } from "../../../services/appwrite/appwrite";
+import { ensureNoActiveSession } from "../../../services/appwrite/authGuard";
+import { toHumanError } from "../../../utils/humanError";
+import Toast from "react-native-toast-message";
 
 type FormInputs = {
     name: string;
@@ -29,32 +32,41 @@ export default function RegisterScreen() {
     const onSubmit = async (data: any) => {
         if (data.password !== data.confirmPassword) {
             setError("confirmPassword", { message: "Passwords must match" });
-            return; // for now we return, should we do anything else?
+            return; // note this is just client side
         }
 
         try {
-            const formattedEmail = data.emailAdress.trim().toLowerCase();
-            const trimmedName = data.name.trim();
+            const email = String(data.emailAdress || "")
+                .trim()
+                .toLowerCase();
+            const name = String(data.name || "").trim();
 
-            const user = await account.create({
+            await ensureNoActiveSession();
+            await account.create({
                 userId: ID.unique(),
-                email: formattedEmail,
+                email,
                 password: data.password,
-                name: trimmedName,
+                name,
+            });
+            await account.createEmailPasswordSession({
+                email,
+                password: data.password,
             });
 
-            // joke of the day: used an hour to find out why create and createEmailPasswordSession
-            // are deprecated. Its because I havent used an object as a param. Silly me.......
-            await account.createEmailPasswordSession({
-                email: formattedEmail,
-                password: data.password,
+            Toast.show({
+                type: "success",
+                text1: "Account created",
+                text2: "You're now logged in",
             });
 
             router.replace("/(home)");
         } catch (err) {
-            // TODO BETTER ERROR HERE
-            // Display in some UI / Maybe toast notifications?
-            console.log(`register error ${err}`);
+            const humanErr = toHumanError(err);
+            Toast.show({
+                type: "error",
+                text1: humanErr.title,
+                text2: humanErr.message,
+            });
         }
     };
 

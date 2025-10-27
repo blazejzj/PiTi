@@ -1,56 +1,48 @@
-import { useEffect, useState } from "react";
-import { account } from "../../src/services/appwrite/appwrite";
+import { View, ActivityIndicator } from "react-native";
 import { useRouter } from "expo-router";
-import { Pressable, Text, View } from "react-native";
+import Toast from "react-native-toast-message";
+import { account } from "../../src/services/appwrite/appwrite";
+import { useProfile } from "../../src/features/profile/hooks/useProfile";
+import ErrorView from "../../src/features/dashboard/screens/ErrorScreen";
+import EmptyProfileScreen from "../../src/features/dashboard/screens/EmptyProfileScreen";
+import DashboardScreen from "../../src/features/dashboard/screens/DashboardScreen";
 
-/*
-THIS COMPONENT IS JUST FOR TESTING PURPOSES. IT SHOULD NOT BE A PART OF THE APPLICATON.
-*/
-export default function profiletest() {
-    const [user, setUser] = useState<any>(null);
+// Container component -> fetch stuff and decide what to render.
+// Views stay dumb and pretty for now
+export default function DashboardContainer() {
     const router = useRouter();
-
-    useEffect(() => {
-        const getUser = async () => {
-            try {
-                const user = await account.get();
-                setUser(user);
-            } catch (err) {
-                console.log(err);
-                router.replace("(auth)/login");
-            }
-        };
-
-        getUser();
-    }, []);
+    const { loading, profile, error } = useProfile();
 
     const handleLogout = async () => {
         await account.deleteSession({ sessionId: "current" });
-        router.replace("(auth)/login");
+        Toast.show({ type: "success", text1: "Logged out" });
+        router.replace("/(auth)/login");
     };
 
-    return (
-        <View className="flex-1 justify-center items-center p-10 bg-white">
-            {user ? (
-                <>
-                    <Text className="text-3xl font-bold">
-                        Hey man ur cool {user.name}
-                    </Text>
-                    <Text className="mt-3 text-lg text-neutral-500">
-                        Your email is = {user.email}
-                    </Text>
-                    <Pressable
-                        onPress={handleLogout}
-                        className="mt-6 p-4 rounded-xl bg-red-500"
-                    >
-                        <Text className="text-white font-bold">
-                            Log out here and test it
-                        </Text>
-                    </Pressable>
-                </>
-            ) : (
-                <Text>Loaaaading.</Text>
-            )}
-        </View>
-    );
+    const handleCreateProfile = () => {
+        router.push("/(home)/profile/setup");
+    };
+
+    if (loading) {
+        return (
+            <View className="flex-1 justify-center items-center bg-white">
+                <ActivityIndicator size="large" />
+            </View>
+        );
+    }
+
+    if (error) {
+        return (
+            <ErrorView
+                message={String((error as any)?.message || error)}
+                onLogout={handleLogout}
+            />
+        );
+    }
+
+    if (!profile) {
+        return <EmptyProfileScreen onCreateProfile={handleCreateProfile} />;
+    }
+
+    return <DashboardScreen profile={profile} onLogout={handleLogout} />;
 }
