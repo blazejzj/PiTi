@@ -6,6 +6,8 @@ export const DB_ID = process.env.EXPO_PUBLIC_APPWRITE_DB_ID!;
 export const COL_USER = process.env.EXPO_PUBLIC_APPWRITE_COL_USER!;
 export const COL_USER_PROFILE =
     process.env.EXPO_PUBLIC_APPWRITE_COL_USER_PROFILE!;
+export const COL_FOOD_ITEM = process.env.EXPO_PUBLIC_APPWRITE_COL_FOOD_ITEM!;
+export const COL_MEAL_ITEM = process.env.EXPO_PUBLIC_APPWRITE_COL_MEAL_ITEM!;
 
 const client = new Client()
     .setEndpoint(APPWRITE_ENDPOINT)
