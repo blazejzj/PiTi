@@ -51,6 +51,16 @@ export const foodItemRepo = {
         return toModel(row);
     },
 
+    // convenience: get by id
+    async get(foodItemId: string): Promise<FoodItem> {
+        const row = await tables.getRow({
+            databaseId: DB_ID,
+            tableId: COL_FOOD_ITEM,
+            rowId: foodItemId,
+        });
+        return toModel(row);
+    },
+
     // search food items by name for a user
     async searchByName(userId: string, q: string): Promise<FoodItem[]> {
         const res = await tables.listRows({

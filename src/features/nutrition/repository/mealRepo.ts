@@ -1,19 +1,15 @@
 import { ID, Query } from "appwrite";
-import {
-    tables,
-    DB_ID,
-    COL_MEAL_ITEM,
-} from "../../../services/appwrite/appwrite";
+import { tables, DB_ID, COL_MEAL } from "../../../services/appwrite/appwrite";
 
-// this is something that I am not quite sure of yet.
-// TODO: Consider removing or making this more flexible
-export type MealType = "breakfast" | "lunch" | "dinner" | "snack";
+// TODO: Consider removing this or expanding, talk through. Should we keep this or
+// make this more flexible?
+export type MealType = "Breakfast" | "Lunch" | "Dinner" | "Snacks";
 
-export type CreateMealItemInput = {
+export type CreateMealInput = {
     userId: string;
     name: string;
-    type: MealType;
-    timeISO: string; // fro example new Date().toISOString() or smth
+    type?: MealType;
+    timeISO: string; // example: new Date().toISOString()
     notes?: string;
 };
 
@@ -21,9 +17,9 @@ export type MealRow = {
     $id: string;
     userId: string;
     name: string;
-    type?: MealType;
-    timeISO: string;
-    mealDate: string; // YYYY-MM-DD
+    type: MealType;
+    timeISO: string; // datetime in Appwrite
+    mealDate: string; // datetime in Appwrite
     notes?: string;
     $createdAt: string;
     $updatedAt: string;
@@ -41,48 +37,66 @@ const toModel = (row: any): MealRow => ({
     $updatedAt: row.$updatedAt,
 });
 
-// move to helper somewhere, for now keep here
-const toDateStr = (isoStr: string): string => isoStr.slice(0, 10); // YYYY-MM-DD
+// should probably be a helper somewhere but we keep here for now
+const startOfDayISO = (iso: string) => {
+    const d = new Date(iso);
+    d.setUTCHours(0, 0, 0, 0);
+    return d.toISOString();
+};
+
+// should probably be a helper somewhere but we keep here for now
+const dayRange = (iso: string) => {
+    const start = new Date(iso);
+    start.setUTCHours(0, 0, 0, 0);
+    const end = new Date(start);
+    end.setUTCDate(end.getUTCDate() + 1);
+    return { startISO: start.toISOString(), endISO: end.toISOString() };
+};
 
 export const mealRepo = {
-    // create a new meal item from input
-    async create(input: CreateMealItemInput): Promise<MealRow> {
+    // so here we create a new meal, based on input
+    async create(input: CreateMealInput): Promise<MealRow> {
         const row = await tables.createRow({
             databaseId: DB_ID,
-            tableId: COL_MEAL_ITEM,
+            tableId: COL_MEAL,
             rowId: ID.unique(),
             data: {
                 userId: input.userId,
                 name: input.name,
                 type: input.type ?? "Breakfast",
                 timeISO: input.timeISO,
-                mealDate: toDateStr(input.timeISO),
+                mealDate: startOfDayISO(input.timeISO),
                 notes: input.notes ?? "",
             },
         });
         return toModel(row);
     },
 
-    // get meal by id
+    // Get single meal by id
     async get(mealId: string): Promise<MealRow> {
         const row = await tables.getRow({
             databaseId: DB_ID,
-            tableId: COL_MEAL_ITEM,
+            tableId: COL_MEAL,
             rowId: mealId,
         });
         return toModel(row);
     },
 
-    // list meals for a user on a specific date -> should be paginated maybe and time instead of date?
-    async listByDate(userId: string, dateStr: string): Promise<MealRow[]> {
+    // List all meals for a user on a specific date
+    async listByDate(
+        userId: string,
+        anyTimeThatDayISO: string
+    ): Promise<MealRow[]> {
+        const { startISO, endISO } = dayRange(anyTimeThatDayISO);
         const res = await tables.listRows({
             databaseId: DB_ID,
-            tableId: COL_MEAL_ITEM,
+            tableId: COL_MEAL,
             queries: [
                 Query.equal("userId", userId),
-                Query.equal("mealDate", dateStr),
+                Query.greaterThanEqual("timeISO", startISO),
+                Query.lessThan("timeISO", endISO),
                 Query.orderAsc("timeISO"),
-                Query.limit(50),
+                Query.limit(100),
             ],
         });
         return res.rows.map(toModel);
