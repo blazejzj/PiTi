@@ -8,6 +8,7 @@ type FormInputProps = {
     label: string;
     rules?: object;
     placeholder?: string;
+    disabled?: boolean;
 } & Pick<
     TextInputProps,
     "keyboardType" | "autoCapitalize" | "autoCorrect" | "secureTextEntry"
@@ -23,6 +24,7 @@ export default function FormInput({
     autoCapitalize,
     autoCorrect,
     secureTextEntry,
+    disabled = false,
 }: FormInputProps) {
     const [fieldFocused, setFieldFocused] = useState(false);
 
@@ -58,9 +60,10 @@ export default function FormInput({
                                 fieldFocused
                                     ? "border-[#41e36f]"
                                     : error
-                                      ? "border-red-400"
-                                      : "border-neutral-200"
+                                    ? "border-red-400"
+                                    : "border-neutral-200"
                             }`}
+                            editable={!disabled}
                         />
                         {error && (
                             <Text className="text-red-500 text-sm mt-1">
