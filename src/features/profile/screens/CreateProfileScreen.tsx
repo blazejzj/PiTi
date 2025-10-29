@@ -55,7 +55,7 @@ export default function CreateProfileScreen() {
                     | "male"
                     | "female"
                     | "other",
-                heigh_cm: Number(data.heigh_cm),
+                height_cm: Number(data.heigh_cm),
                 weight_kg: Number(data.weight_kg),
                 daily_kcal_target: Number(data.daily_kcal_target),
                 carb_target_g: Number(data.carb_target_g),
@@ -123,7 +123,7 @@ export default function CreateProfileScreen() {
                     />
                     <FormInput
                         control={control}
-                        name="heigh_cm"
+                        name="height_cm"
                         label="Height (cm)"
                         placeholder="Height (cm)"
                         keyboardType="numeric"
