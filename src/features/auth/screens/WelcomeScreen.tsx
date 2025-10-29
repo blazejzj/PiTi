@@ -47,6 +47,20 @@ export default function WelcomeScreen() {
                 onRegister={() => router.push("/(auth)/register")}
                 onLogin={() => router.push("/(auth)/login")}
             />
+
+            <Pressable
+                onPress={() => router.replace("/(home)/profile")}
+                style={{ padding: 12, borderRadius: 8, borderWidth: 1 }}
+            >
+                <Text>Dev: Open Profile</Text>
+            </Pressable>
+
+            <Pressable
+                onPress={() => router.replace("/(home)/profile/setup")}
+                style={{ padding: 12, borderRadius: 8, borderWidth: 1 }}
+            >
+                <Text>Dev: Open CreateProfile</Text>
+            </Pressable>
         </View>
     );
 }
