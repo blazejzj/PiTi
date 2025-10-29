@@ -67,19 +67,62 @@ export default function CreateProfileScreen() {
 
     return (
         <View className="flex-1 p-safe bg-white p-10 justify-center gap-10">
+            {/* Back button right here..*/}
             <Pressable
                 onPress={handleGoBack}
                 className="absolute top-12 left-4 p-2"
             >
                 <Text className="font-semibold">Back</Text>
             </Pressable>
-            <View className="place-self-start">
+
+            {/* Header section.. */}
+            <View className="">
                 <Text className="font-bold text-3xl text-center">
                     Create Your Profile
                 </Text>
                 <Text className="text-xl text-center">
-                    Add details below/fill in stuff...{" "}
+                    Add details below/fill in stuff...
                 </Text>
+            </View>
+
+            {/* Form section.. */}
+            <View className="w-full max-w-md self-center">
+                <View>
+                    <FormInput
+                        control={control}
+                        name="age"
+                        label="Age"
+                        placeholder="Age"
+                        keyboardType="numeric"
+                        rules={{ required: "Please enter your age" }}
+                    />
+                    <FormInput
+                        control={control}
+                        name="heigh_cm"
+                        label="Height"
+                        placeholder="Height (cm)"
+                        keyboardType="numeric"
+                        rules={{ required: "Please enter your height" }}
+                    />
+                    <FormInput
+                        control={control}
+                        name="weight_kg"
+                        label="Weight"
+                        placeholder="Weight (kg)"
+                        keyboardType="numeric"
+                        rules={{ required: "Please enter your weight" }}
+                    />
+                </View>
+
+                {/* Submit button/save propifle.. */}
+                <View>
+                    <Button
+                        title="Save profile"
+                        onPress={handleCreateProfile}
+                        variant="primary"
+                        className="mt-6"
+                    />
+                </View>
             </View>
         </View>
     );
