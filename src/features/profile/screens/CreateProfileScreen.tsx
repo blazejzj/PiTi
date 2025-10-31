@@ -123,7 +123,7 @@ export default function CreateProfileScreen() {
                     />
                     <FormInput
                         control={control}
-                        name="height_cm"
+                        name="heigh_cm"
                         label="Height (cm)"
                         placeholder="Height (cm)"
                         keyboardType="numeric"
