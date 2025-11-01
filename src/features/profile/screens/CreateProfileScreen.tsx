@@ -10,7 +10,7 @@ import { upsertUserProfile } from "../api/profileRepo";
 type FormInputs = {
     age: string;
     sex: string;
-    heigh_cm: string;
+    height_cm: string;
     weight_kg: string;
     daily_kcal_target: string;
     carb_target_g: string;
@@ -24,7 +24,7 @@ export default function CreateProfileScreen() {
         defaultValues: {
             age: "",
             sex: "",
-            heigh_cm: "",
+            height_cm: "",
             weight_kg: "",
             daily_kcal_target: "",
             carb_target_g: "",
@@ -55,7 +55,7 @@ export default function CreateProfileScreen() {
                     | "male"
                     | "female"
                     | "other",
-                height_cm: Number(data.heigh_cm),
+                height_cm: Number(data.height_cm),
                 weight_kg: Number(data.weight_kg),
                 daily_kcal_target: Number(data.daily_kcal_target),
                 carb_target_g: Number(data.carb_target_g),
@@ -123,7 +123,7 @@ export default function CreateProfileScreen() {
                     />
                     <FormInput
                         control={control}
-                        name="heigh_cm"
+                        name="height_cm"
                         label="Height (cm)"
                         placeholder="Height (cm)"
                         keyboardType="numeric"

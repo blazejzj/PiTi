@@ -15,13 +15,13 @@ export default function ProfileScreen() {
     if (!profile) return null; // otherwise profile might possibly be null...
 
     {
-        /* TODO: Calculate BMI here for display, buuut, it fails because of the typo thing in the profile model i think - heigh_cm vs height_cm. FIX! */
+        /* NOTE: AppWrite typos for height_cm was fixed, BMI works fine now. All other fields have also been corrected. updated models.ts too.  */
     }
     const bmi =
-        profile.heigh_cm && profile.weight_kg
+        profile.height_cm && profile.weight_kg
             ? (
                   profile.weight_kg /
-                  ((profile.heigh_cm / 100) * (profile.heigh_cm / 100))
+                  ((profile.height_cm / 100) * (profile.height_cm / 100))
               ).toFixed(1)
             : "N/A";
 
@@ -77,7 +77,7 @@ export default function ProfileScreen() {
                     </View>
                 </SectionCard>
 
-                {/* KroppsinfoSection here...Fix failing BMI by fixing typo in apprwrite.*/}
+                {/* KroppsinfoSection here...Fixed BMI calculation too. */}
                 <SectionCard title="Kroppsinfo">
                     <View className="flex-row justify-around px-5 ">
                         <InfoItem

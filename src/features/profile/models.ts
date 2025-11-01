@@ -1,7 +1,7 @@
 export type UserProfile = {
     $id: string;
     user_id: string;
-    heigh_cm?: number | null;
+    height_cm?: number | null;
     weight_kg?: number | null;
     age?: number | null;
     sex?: "male" | "female" | "other" | null;
