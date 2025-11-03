@@ -103,4 +103,38 @@ describe("CreateProfileScreen", () => {
             expect(upsertUserProfile).not.toHaveBeenCalled();
         });
     });
+
+    //upsertUserProfile fails/throws test
+    it("shows error toast when upsertUserProfile fails/throws", async () => {
+        (useProfile as jest.Mock).mockReturnValue({
+            userId: "user-666",
+        });
+        (upsertUserProfile as jest.Mock).mockRejectedValue(
+            new Error("Failed to s")
+        );
+
+        render(<CreateProfileScreen />);
+
+        fireEvent.changeText(screen.getByPlaceholderText("Age"), "30");
+        fireEvent.changeText(
+            screen.getByPlaceholderText("male / female / other"),
+            "male"
+        );
+        fireEvent.changeText(screen.getByPlaceholderText("Height (cm)"), "180");
+        fireEvent.changeText(screen.getByPlaceholderText("Weight (kg)"), "75");
+
+        await act(async () => {
+            fireEvent.press(screen.getByText("Save profile"));
+        });
+
+        await waitFor(() => {
+            expect(Toast.show).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    type: "error",
+                    text1: "Error creating profile",
+                    text2: "Please try again later",
+                })
+            );
+        });
+    });
 });
