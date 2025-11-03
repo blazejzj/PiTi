@@ -3,7 +3,7 @@ import { useRouter } from 'expo-router';
 import { useForm, Control } from "react-hook-form";
 import Button from '../../../components/Button';
 import FormInput from '../../../components/FormInput';
-import { useWorkoutDraft } from '../state/useWorkoutDratf';
+import { useWorkoutDraft } from '../state/useWorkoutDraft';
 
 type AddExerciseForm = {
     exerciseName: string;
@@ -103,7 +103,7 @@ export default function AddExerciseScreen() {
                 <View className="mb-10" />
 
                 <Button
-                    title="Add Exercise to a workdout session"
+                    title="Add Exercise to a workout session"
                     variant="primary" 
                     onPress={handleSubmit(handleSaveExercise)}
                     className="w-full rounded-xl" 
