@@ -30,6 +30,7 @@ import { useProfile } from "../../features/profile/hooks/useProfile";
 import { upsertUserProfile } from "../../features/profile/api/profileRepo";
 import Toast from "react-native-toast-message";
 import CreateProfileScreen from "../../features/profile/screens/CreateProfileScreen";
+import { act } from "react";
 
 describe("CreateProfileScreen", () => {
     beforeEach(() => {
@@ -68,6 +69,38 @@ describe("CreateProfileScreen", () => {
                 })
             );
             expect(mockRouter.replace).toHaveBeenCalledWith("/(home)/profile");
+        });
+    });
+
+    //No useer found test
+    it("shows error toast when no userId is present", async () => {
+        (useProfile as jest.Mock).mockReturnValue({
+            userId: null,
+        });
+
+        render(<CreateProfileScreen />);
+
+        fireEvent.changeText(screen.getByPlaceholderText("Age"), "30");
+        fireEvent.changeText(
+            screen.getByPlaceholderText("male / female / other"),
+            "male"
+        );
+        fireEvent.changeText(screen.getByPlaceholderText("Height (cm)"), "180");
+        fireEvent.changeText(screen.getByPlaceholderText("Weight (kg)"), "75");
+
+        await act(async () => {
+            fireEvent.press(screen.getByText("Save profile"));
+        });
+
+        await waitFor(() => {
+            expect(Toast.show).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    type: "error",
+                    text1: "User not found",
+                    text2: "Please log in again",
+                })
+            );
+            expect(upsertUserProfile).not.toHaveBeenCalled();
         });
     });
 });
