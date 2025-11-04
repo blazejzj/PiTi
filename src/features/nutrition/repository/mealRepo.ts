@@ -1,0 +1,104 @@
+import { ID, Query } from "appwrite";
+import { tables, DB_ID, COL_MEAL } from "../../../services/appwrite/appwrite";
+
+// TODO: Consider removing this or expanding, talk through. Should we keep this or
+// make this more flexible?
+export type MealType = "Breakfast" | "Lunch" | "Dinner" | "Snacks";
+
+export type CreateMealInput = {
+    userId: string;
+    name: string;
+    type?: MealType;
+    timeISO: string; // example: new Date().toISOString()
+    notes?: string;
+};
+
+export type MealRow = {
+    $id: string;
+    userId: string;
+    name: string;
+    type: MealType;
+    timeISO: string; // datetime in Appwrite
+    mealDate: string; // datetime in Appwrite
+    notes?: string;
+    $createdAt: string;
+    $updatedAt: string;
+};
+
+const toModel = (row: any): MealRow => ({
+    $id: row.$id,
+    userId: row.userId,
+    name: row.name,
+    type: row.type,
+    timeISO: row.timeISO,
+    mealDate: row.mealDate,
+    notes: row.notes,
+    $createdAt: row.$createdAt,
+    $updatedAt: row.$updatedAt,
+});
+
+// should probably be a helper somewhere but we keep here for now
+const startOfDayISO = (iso: string) => {
+    const d = new Date(iso);
+    d.setUTCHours(0, 0, 0, 0);
+    return d.toISOString();
+};
+
+// should probably be a helper somewhere but we keep here for now
+const dayRange = (iso: string) => {
+    const start = new Date(iso);
+    start.setUTCHours(0, 0, 0, 0);
+    const end = new Date(start);
+    end.setUTCDate(end.getUTCDate() + 1);
+    return { startISO: start.toISOString(), endISO: end.toISOString() };
+};
+
+export const mealRepo = {
+    // so here we create a new meal, based on input
+    async create(input: CreateMealInput): Promise<MealRow> {
+        const row = await tables.createRow({
+            databaseId: DB_ID,
+            tableId: COL_MEAL,
+            rowId: ID.unique(),
+            data: {
+                userId: input.userId,
+                name: input.name,
+                type: input.type ?? "Breakfast",
+                timeISO: input.timeISO,
+                mealDate: startOfDayISO(input.timeISO),
+                notes: input.notes ?? "",
+            },
+        });
+        return toModel(row);
+    },
+
+    // Get single meal by id
+    async get(mealId: string): Promise<MealRow> {
+        const row = await tables.getRow({
+            databaseId: DB_ID,
+            tableId: COL_MEAL,
+            rowId: mealId,
+        });
+        return toModel(row);
+    },
+
+    // List all meals for a user on a specific date
+    async listByDate(
+        userId: string,
+        anyTimeThatDayISO: string
+    ): Promise<MealRow[]> {
+        const { startISO, endISO } = dayRange(anyTimeThatDayISO);
+        const res = await tables.listRows({
+            databaseId: DB_ID,
+            tableId: COL_MEAL,
+            queries: [
+                Query.equal("userId", userId),
+                Query.greaterThanEqual("timeISO", startISO),
+                Query.lessThan("timeISO", endISO),
+                Query.orderAsc("timeISO"),
+                Query.limit(100),
+            ],
+        });
+        return res.rows.map(toModel);
+    },
+};

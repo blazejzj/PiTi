@@ -15,7 +15,14 @@
             "edgeToEdgeEnabled": true,
             "predictiveBackGestureEnabled": false
         },
-        "plugins": ["expo-router"],
-        "scheme": "piti"
+        "plugins": [
+            "expo-router",
+            [
+                "expo-camera",
+                {
+                    "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera"
+                }
+            ]
+        ]
     }
 }

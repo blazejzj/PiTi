@@ -1,135 +1,289 @@
-import { Pressable, Text, View, ScrollView, Platform, TextInput } from "react-native";
+import { Pressable, Text, View, ScrollView, TextInput } from "react-native";
 import { useRouter } from "expo-router";
 import { useForm } from "react-hook-form";
-import Button from "../../../components/Button"; 
-import FormInput from "../../../components/FormInput"; 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import Button from "../../../components/Button";
+import FormInput from "../../../components/FormInput";
+import { account } from "../../../services/appwrite/appwrite";
+import { MealType, mealRepo } from "../repository/mealRepo";
+import { foodItemRepo } from "../repository/foodItemRepo";
+import { mealItemRepo } from "../repository/mealItemRepo";
+import { useMealDraft } from "../state/useMealDraft";
+import MacroPill from "../components/MacroPill";
+import ScreenContainer from "../../auth/components/ScreenContainer";
 
-type MealFormInputs = {
-    mealName: string;
-    notes: string;
+type MealFormInputs = { mealName: string; notes: string };
+
+// Like mentioned laready once, TODO: Shouuld maybe remove this or make it more flexible?
+// for now its okay
+const MEAL_TYPES: MealType[] = ["Breakfast", "Lunch", "Dinner", "Snacks"];
+
+// TODO: HELPERS, should probably go to utils later
+const toTodayISOWithTime = (hhmm: string) => {
+    const [h, m] = hhmm.split(":").map(Number);
+    const d = new Date();
+    d.setHours(h || 0, m || 0, 0, 0);
+    return d.toISOString();
 };
-
-const MEAL_TYPES = ['Breakfast', 'Lunch', 'Dinner', 'Snacks'];
+const kcalForAmount = (kcalPer100g: number, amountG: number) =>
+    Math.round(((kcalPer100g || 0) * amountG) / 100);
 
 export default function AddMealScreen() {
     const router = useRouter();
 
-    const [selectedMealType] = useState<string>('Breakfast');
-    const [selectedTime] = useState<string>('08:00');
-    
-    const addedFoodItems = [{ name: "Oats", kcal: 90 }];
-    const totalKcal = 90;
+    const [selectedMealType, setSelectedMealType] =
+        useState<MealType>("Breakfast");
+    const [selectedTime, setSelectedTime] = useState<string>("08:00");
 
-    const { control, handleSubmit } = useForm<MealFormInputs>({
+    const draft = useMealDraft();
+
+    // probably unnecessary use of useMemo here, and could use useState in draft directly
+    const totals = useMemo(() => draft.totals(), [draft.items]);
+    const totalKcal = totals.kcal;
+
+    const { control, handleSubmit, watch } = useForm<MealFormInputs>({
         defaultValues: { mealName: "", notes: "" },
     });
 
-    const handleAddFoodItem = () => {
-        router.push("/food/scanItem"); 
-    };
-    
-    const onSubmit = () => {
-        console.log("Meal data submitted; no real data handling rn");
+    // KEep the meal name in sync with draft state
+    const mealNameWatch = watch("mealName");
+
+    useEffect(() => {
+        if (draft.mealName !== mealNameWatch) {
+            draft.setMealName(mealNameWatch ?? "");
+        }
+    }, [mealNameWatch]);
+
+    const handleAddFoodItem = () => router.push("/food/scanItem");
+
+    const onSubmit = async (data: MealFormInputs) => {
+        // get user
+        const user = await account.get();
+        const timeISO = toTodayISOWithTime(selectedTime);
+
+        // create meal
+        const meal = await mealRepo.create({
+            userId: user.$id,
+            name: data.mealName || "Untitled meal",
+            type: selectedMealType,
+            timeISO,
+            notes: data.notes || "",
+        });
+
+        // create meal items
+        await Promise.all(
+            draft.items.map(async (it) => {
+                const fi = await foodItemRepo.get(it.foodItemId);
+                await mealItemRepo.create({
+                    mealId: meal.$id,
+                    foodItemId: it.foodItemId,
+                    amountG: it.amountG,
+                    kcalPer100g: fi.kcalPer100g ?? 0,
+                    carbPer100g: fi.carbPer100g ?? 0,
+                    fatPer100g: fi.fatPer100g ?? 0,
+                    proteinPer100g: fi.proteinPer100g ?? 0,
+                });
+            })
+        );
+
+        // clear draft and go back
+        draft.clear();
         router.back();
     };
 
     const handleAddMeal = handleSubmit(onSubmit);
 
     return (
-        <View className="flex-1 bg-white px-5">
-            <ScrollView 
-                className="flex-1 px-5" 
-                showsVerticalScrollIndicator={false}
-                contentContainerStyle={{ paddingBottom: Platform.OS === 'ios' ? 40 : 20 }}
-            >
-                <Pressable
-                    onPress={() => router.back()}
-                    className="mb-8 mt-12 self-start"
-                >
-                    <Text className="font-semibold">← Go Back</Text>
+        <ScreenContainer className="flex-1 bg-white">
+            <View className="px-5 pb-3 flex-row items-center">
+                <Pressable onPress={() => router.back()}>
+                    <Text className="font-semibold text-neutral-700">
+                        ← Back
+                    </Text>
                 </Pressable>
+                <Text className="flex-1 text-center text-2xl font-bold text-neutral-900 mr-10">
+                    Add Meal
+                </Text>
+            </View>
 
-                <View className="w-full self-center flex gap-5">
-                    
-                    <FormInput
-                        control={control}
-                        name="mealName"
-                        label="Name of your meal"
-                        placeholder="Chicken salad etc."
-                        autoCapitalize="words"
-                    />
+            <ScrollView
+                className="flex-1"
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={{ paddingBottom: 140 }}
+            >
+                <View className="px-5">
+                    <View className="bg-white rounded-2xl border border-neutral-200 shadow-xs p-5 mb-5">
+                        <Text className="text-neutral-700 font-medium mb-3">
+                            Meal details
+                        </Text>
 
-                    <View className="flex gap-2">
-                        <Text className="text-base font-medium text-neutral-700">Meal Type</Text>
-                        <Pressable 
-                            onPress={() => console.log('Open Meal Type Selector')}
-                            className="p-3 rounded-xl border border-neutral-200 bg-neutral-100 flex-row justify-between items-center"
-                        >
-                            <Text className="text-neutral-900 text-base">{selectedMealType}</Text>
-                            <Text>▼</Text>
-                        </Pressable>
+                        <FormInput
+                            control={control}
+                            name="mealName"
+                            label="Name"
+                            placeholder="Chicken salad, Oats & berries..."
+                            autoCapitalize="words"
+                        />
+
+                        <View className="mt-4">
+                            <Text className="text-base font-medium text-neutral-700 mb-2">
+                                Meal Type
+                            </Text>
+                            <View className="flex-row flex-wrap">
+                                {MEAL_TYPES.map((t) => {
+                                    const active = t === selectedMealType;
+                                    return (
+                                        <Pressable
+                                            key={t}
+                                            onPress={() =>
+                                                setSelectedMealType(t)
+                                            }
+                                            className={`px-4 py-2 mr-2 mb-2 rounded-xl border ${
+                                                active
+                                                    ? "bg-green-500 border-green-500"
+                                                    : "bg-neutral-100 border-neutral-200"
+                                            }`}
+                                        >
+                                            <Text
+                                                className={
+                                                    active
+                                                        ? "text-white font-semibold"
+                                                        : "text-neutral-800 font-medium"
+                                                }
+                                            >
+                                                {t}
+                                            </Text>
+                                        </Pressable>
+                                    );
+                                })}
+                            </View>
+                        </View>
+
+                        <View className="mt-4">
+                            <Text className="text-base font-medium text-neutral-700 mb-2">
+                                Time
+                            </Text>
+                            <Pressable
+                                onPress={() =>
+                                    setSelectedTime((prev) =>
+                                        prev === "08:00" ? "12:00" : "08:00"
+                                    )
+                                }
+                                className="p-4 rounded-xl border border-neutral-200 bg-neutral-100 flex-row justify-between items-center"
+                            >
+                                <Text className="text-neutral-900 text-base">
+                                    {selectedTime}
+                                </Text>
+                                <Text>▼</Text>
+                            </Pressable>
+                            {/* TODO: Implement real time picker this is shit */}
+                            <Text className="text-xs text-neutral-500 mt-1">
+                                Temporary time switcher.
+                            </Text>
+                        </View>
                     </View>
 
-                    <View className="flex gap-2">
-                        <Text className="text-base font-medium text-neutral-700">Time</Text>
-                        <Pressable 
-                            onPress={() => console.log('Open Time Selector')}
-                            className="p-3 rounded-xl border border-neutral-200 bg-neutral-100 flex-row justify-between items-center"
-                        >
-                            <Text className="text-neutral-900 text-base">{selectedTime}</Text>
-                            <Text>▼</Text>
-                        </Pressable>
-                    </View>
-
-                    <View className="flex gap-2">
-                        <Text className="text-base font-medium text-neutral-700">Food Items</Text>
+                    <View className="bg-white rounded-2xl border border-neutral-200 shadow-xs p-5 mb-5">
+                        <Text className="text-neutral-700 font-medium mb-3">
+                            Food items
+                        </Text>
 
                         <Button
                             onPress={handleAddFoodItem}
-                            title="+ Add or Scan More Food Items"
+                            title="+ Add or Scan Food"
                             variant="primary"
-                            className="w-full rounded-xl py-4 mb-2"
-                            textClassName="text-lg font-bold text-black"
+                            className="w-full rounded-xl mb-3"
+                            textClassName="text-base font-bold text-white"
                         />
 
-                        {addedFoodItems.map((item, index) => (
-                            <View key={index} className="flex-row justify-between items-center px-1">
-                                <Text className="text-neutral-700">{item.name}</Text>
-                                <Text className="text-neutral-700 font-semibold">{item.kcal}kcal</Text>
+                        {draft.items.length === 0 ? (
+                            <Text className="text-neutral-500">
+                                No items yet. Add or scan to start.
+                            </Text>
+                        ) : (
+                            <View className="mt-1">
+                                {/* 
+                                    TODO: Add input or slider here so user can adjust amount eaten for ex. 60g instead of default 100g.
+                                    When changed, update it.amountG in draft.items and recalc kcal/macros with kcalForAmount() aw yes
+                                */}
+
+                                {draft.items.map((it, idx) => (
+                                    <View
+                                        key={`${it.foodItemId}-${idx}`}
+                                        className="flex-row justify-between items-center py-3 border-b border-neutral-100"
+                                    >
+                                        <View className="flex-1 pr-3">
+                                            <Text
+                                                className="text-neutral-900 font-medium"
+                                                numberOfLines={1}
+                                            >
+                                                {it.name}
+                                            </Text>
+                                            <Text className="text-xs text-neutral-500">
+                                                {it.amountG} g
+                                            </Text>
+                                        </View>
+                                        <Text className="text-neutral-900 font-semibold">
+                                            {kcalForAmount(
+                                                it.kcalPer100g,
+                                                it.amountG
+                                            )}{" "}
+                                            kcal
+                                        </Text>
+                                    </View>
+                                ))}
                             </View>
-                        ))}
-
+                        )}
                     </View>
-                    
-                    <FormInput
-                        control={control}
-                        name="notes"
-                        label="Notes"
-                        placeholder="..."
-                    />
 
-                    <View className="flex gap-2 mt-4">
-                        <Text className="text-base font-medium text-neutral-700">Total kcal</Text>
-                        <TextInput
-                            value={String(totalKcal)} 
-                            editable={false} 
-                            className="p-3 rounded-xl border border-neutral-200 bg-neutral-100 text-neutral-900 text-base text-right font-bold"
+                    <View className="bg-white rounded-2xl border border-neutral-200 shadow-xs p-5 mb-5">
+                        <Text className="text-neutral-700 font-medium mb-3">
+                            Notes
+                        </Text>
+                        <FormInput
+                            control={control}
+                            name="notes"
+                            label="Notes"
+                            placeholder="..."
                         />
                     </View>
 
-                </View>
+                    <View className="bg-white rounded-2xl border border-neutral-200 shadow-xs p-5">
+                        <Text className="text-neutral-700 font-medium mb-3">
+                            Summary
+                        </Text>
 
-                <View className="mt-8 mb-10">
-                    <Button
-                        title="+ Add Meal"
-                        variant="primary"
-                        onPress={handleAddMeal}
-                        textClassName="text-lg font-bold text-white"
-                        className="w-full rounded-xl py-4"
-                    />
+                        <View className="flex-row items-baseline justify-between mb-3">
+                            <Text className="text-2xl font-extrabold text-neutral-900">
+                                {totalKcal} kcal
+                            </Text>
+                        </View>
+
+                        <View className="flex-row justify-between">
+                            <MacroPill
+                                label="Carbs"
+                                value={`${totals.carb} g`}
+                            />
+                            <MacroPill
+                                label="Protein"
+                                value={`${totals.protein} g`}
+                            />
+                            <MacroPill label="Fat" value={`${totals.fat} g`} />
+                        </View>
+                    </View>
                 </View>
             </ScrollView>
-        </View>
+
+            {/* Sticky footer CTA */}
+            <View className="px-5 pb-8 pt-4 bg-white border-t border-neutral-200">
+                <Button
+                    title="+ Add Meal"
+                    variant="primary"
+                    onPress={handleAddMeal}
+                    textClassName="text-lg font-bold text-white"
+                    className="w-full rounded-2xl shadow-md"
+                />
+            </View>
+        </ScreenContainer>
     );
 }
