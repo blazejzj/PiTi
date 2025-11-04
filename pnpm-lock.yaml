@@ -20,6 +20,9 @@ importers:
       '@hookform/resolvers':
         specifier: 5.2.2
         version: 5.2.2(react-hook-form@7.63.0(react@19.1.0))
+      '@react-navigation/native':
+        specifier: ^7.1.19
+        version: 7.1.19(react-native@0.81.5(@babel/core@7.28.5)(@types/react@19.1.17)(react@19.1.0))(react@19.1.0)
       appwrite:
         specifier: 20.1.0
         version: 20.1.0
