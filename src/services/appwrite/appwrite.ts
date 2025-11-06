@@ -9,6 +9,15 @@ export const COL_USER_PROFILE =
 export const COL_FOOD_ITEM = process.env.EXPO_PUBLIC_APPWRITE_COL_FOOD_ITEM!;
 export const COL_MEAL_ITEM = process.env.EXPO_PUBLIC_APPWRITE_COL_MEAL_ITEM!;
 export const COL_MEAL = process.env.EXPO_PUBLIC_APPWRITE_COL_MEAL!;
+export const COL_PROGRAM = process.env.EXPO_PUBLIC_APPWRITE_COL_PROGRAM!;
+export const COL_PROGRAM_WORKOUT =
+    process.env.EXPO_PUBLIC_APPWRITE_COL_PROGRAM_WORKOUT!;
+export const COL_WORKOUT = process.env.EXPO_PUBLIC_APPWRITE_COL_WORKOUT!;
+export const COL_WORKOUT_EXERCISE =
+    process.env.EXPO_PUBLIC_APPWRITE_COL_WORKOUT_EXERCISE!;
+export const COL_WORKOUT_SET = process.env.EXPO_PUBLIC_APPWRITE_COL_WORKOUT_SET!;
+export const COL_EXERCISE_TEMPLATE =
+    process.env.EXPO_PUBLIC_APPWRITE_COL_EXERCISE_TEMPLATE!;
 
 const client = new Client()
     .setEndpoint(APPWRITE_ENDPOINT)
