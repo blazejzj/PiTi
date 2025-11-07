@@ -2,9 +2,10 @@ import { Stack } from "expo-router";
 
 export default function TrainingStack() {
     return (
-        <Stack>
-            <Stack.Screen name="index" options={{ title: "Training" }} />
-            <Stack.Screen name="addTrainingSession" options={{ title: "Add Training Session" }} />
+        <Stack screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="index"/>
+            <Stack.Screen name="addTrainingSession"/>
+            <Stack.Screen name="addExercise"/>
         </Stack>
     );
 }
