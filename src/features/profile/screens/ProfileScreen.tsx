@@ -79,28 +79,28 @@ export default function ProfileScreen() {
 
                 {/* KroppsinfoSection here...Fixed BMI calculation too. */}
                 <SectionCard title="Body Info">
-                    <View className="flex-row justify-around px-5 ">
+                    <View className="flex-row px-8 gap-3">
                         <InfoItem
                             label="Weight"
                             value={`${profile.weight_kg ?? "N/A"} kg`}
-                            className="bg-neutral-200 rounded-3xl min-width-[500px]"
+                            className="bg-neutral-200 rounded-3xl flex-1"
                         />
                         <InfoItem
                             label="Age"
                             value={`${profile.age ?? "N/A"} years`}
-                            className="bg-neutral-200 rounded-3xl min-width-[80px]"
+                            className="bg-neutral-200 rounded-3xl flex-1"
                         />
                     </View>
-                    <View className="flex-row justify-around px-5 mt-4 border-b border-neutral-400 pb-6">
+                    <View className="flex-row px-8 mt-4 border-b border-neutral-400 pb-6 gap-3">
                         <InfoItem
                             label="BMI"
                             value={bmi}
-                            className="bg-neutral-200 rounded-3xl min-width-[200px]"
+                            className="bg-neutral-200 rounded-3xl flex-1"
                         />
                         <InfoItem
                             label="Stats"
                             value="N/A"
-                            className="bg-neutral-200 rounded-3xl min-width-[200px]"
+                            className="bg-neutral-200 rounded-3xl flex-1"
                         />
                     </View>
                 </SectionCard>

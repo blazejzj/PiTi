@@ -10,7 +10,9 @@ export default function InfoItem({
     className?: string;
 }) {
     return (
-        <View className={`items-center rounded-2xl px-4 py-2 ${className}`}>
+        <View
+            className={`items-center justify-center rounded-2xl py-3 flex-1 ${className}`}
+        >
             <Text className="font-semibold text-lg ">{label}</Text>
             <Text className="text-neutral-600 text-sm ">{value ?? "n/a"}</Text>
         </View>
