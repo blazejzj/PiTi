@@ -2,15 +2,32 @@ import { router } from "expo-router";
 import { useRouter } from "expo-router";
 import { useProfile } from "../hooks/useProfile";
 import { Text, View, Pressable, ScrollView } from "react-native";
-import { ActivityIndicator } from "react-native";
+import { useState, useEffect } from "react";
 import Button from "../../../components/Button";
 import { SectionCard } from "../components/SectionCard";
 import InfoItem from "../components/InfoItem";
+import { account } from "../../../services/appwrite/appwrite";
 
 export default function ProfileScreen() {
     const router = useRouter();
     const { loading, profile, error } = useProfile();
-    const userName = "Ola Nordmann"; // just for now,..TODO: fetch dynamic name!
+    //const userName = "Ola Nordmann";
+    const [userName, setUserName] = useState<string>("user");
+
+    // confused with tables - and name fetching, No field for user name? . Fethcin user name from email, workaround. Better than hardcoded name.
+    useEffect(() => {
+        const fetchUserName = async () => {
+            try {
+                const currentUser = await account.get();
+                const name = currentUser.email.split("@")[0];
+                setUserName(name);
+            } catch (error) {
+                console.error("Error fetching user name:", error);
+            }
+        };
+
+        fetchUserName();
+    }, []);
 
     if (!profile) return null; // otherwise profile might possibly be null...
 
@@ -36,7 +53,7 @@ export default function ProfileScreen() {
                 <View className="items-center py-8 bg-white">
                     <View className="w-20 h-20 rounded-full bg-neutral-200 mb-4" />
                     <Text className="text-xl font-semibold mb-1">
-                        Ola Nordmann
+                        {userName}
                     </Text>
                 </View>
 
