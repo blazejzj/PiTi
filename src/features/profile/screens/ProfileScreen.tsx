@@ -29,7 +29,7 @@ export default function ProfileScreen() {
         <ScrollView
             className="flex-1 bg-white p-safe"
             showsVerticalScrollIndicator={false}
-            contentContainerStyle={{ paddingBottom: 50 }}
+            contentContainerStyle={{ paddingBottom: 50, paddingTop: 50 }}
         >
             <View className="bg-white">
                 {/* Heeader section here. Cant fetch dynamic user name?? Ask later. */}

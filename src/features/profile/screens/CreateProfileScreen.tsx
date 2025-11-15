@@ -82,7 +82,7 @@ export default function CreateProfileScreen() {
     const handleCreateProfile = () => handleSubmit(onSubmit)();
 
     return (
-        <View className="flex-1 bg-white p-safe">
+        <View className="flex-1 bg-white p-safe pt-10">
             <Pressable
                 onPress={handleGoBack}
                 className="top-12 left-4 p-2 z-10 self-start"
