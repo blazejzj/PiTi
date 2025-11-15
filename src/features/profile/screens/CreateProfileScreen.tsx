@@ -97,7 +97,7 @@ export default function CreateProfileScreen() {
             >
                 <View className="mb-6">
                     <Text className="font-bold text-3xl text-center">
-                        Create Your Profile
+                        Setup your profile
                     </Text>
                     <Text className="text-lg text-center text-neutral-600 mt-2">
                         Add your personal details below
