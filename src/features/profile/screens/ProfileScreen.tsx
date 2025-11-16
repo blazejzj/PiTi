@@ -155,7 +155,7 @@ export default function ProfileScreen() {
                     <Button
                         title="Edit Profile"
                         variant="primary"
-                        onPress={() => router.push("/(home)/profile/setup")}
+                        onPress={() => router.push("/(home)/profile/edit")}
                         className="w-3/4 rounded-2xl py-4"
                     />
                 </View>

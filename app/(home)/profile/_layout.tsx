@@ -5,6 +5,7 @@ export default function ProfileStack() {
         <Stack>
             <Stack.Screen name="index" options={{ headerShown: false }} />
             <Stack.Screen name="setup" options={{ headerShown: false }} />
+            <Stack.Screen name="edit" options={{ headerShown: false }} />
         </Stack>
     );
 }
