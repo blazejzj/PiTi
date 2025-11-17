@@ -5,7 +5,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Button from "../../../components/Button";
 import { DummyMeals } from "../../../lib/dummyDataMeal";
 import MealItem from "../components/MealItem";
-import { Meal } from "../../../types/nutrition";
+import { Meal } from "../models";
 import MacroPill from "../components/MacroPill";
 
 export default function NutritionScreen() {

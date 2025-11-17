@@ -2,6 +2,13 @@
 
 export type MealType = "Breakfast" | "Lunch" | "Dinner" | "Snacks";
 
+export const MEAL_TYPES: MealType[] = [
+    "Breakfast",
+    "Lunch",
+    "Dinner",
+    "Snacks",
+];
+
 // DB MODELS
 
 export type FoodItem = {

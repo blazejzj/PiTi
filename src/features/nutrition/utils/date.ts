@@ -13,3 +13,10 @@ export const dayRange = (iso: string) => {
     end.setUTCDate(end.getUTCDate() + 1);
     return { startISO: start.toISOString(), endISO: end.toISOString() };
 };
+
+export const toTodayISOWithTime = (hhmm: string) => {
+    const [h, m] = hhmm.split(":").map(Number);
+    const d = new Date();
+    d.setHours(h || 0, m || 0, 0, 0);
+    return d.toISOString();
+};

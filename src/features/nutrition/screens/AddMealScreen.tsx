@@ -12,22 +12,11 @@ import { useMealDraft } from "../state/useMealDraft";
 import MacroPill from "../components/MacroPill";
 import ScreenContainer from "../../auth/components/ScreenContainer";
 import { MealType } from "../models";
+import { MEAL_TYPES } from "../models";
+import { toTodayISOWithTime } from "../utils/date";
+import { kcalForAmount } from "../utils/nutrition";
 
 type MealFormInputs = { mealName: string; notes: string };
-
-// Like mentioned laready once, TODO: Shouuld maybe remove this or make it more flexible?
-// for now its okay
-const MEAL_TYPES: MealType[] = ["Breakfast", "Lunch", "Dinner", "Snacks"];
-
-// TODO: HELPERS, should probably go to utils later
-const toTodayISOWithTime = (hhmm: string) => {
-    const [h, m] = hhmm.split(":").map(Number);
-    const d = new Date();
-    d.setHours(h || 0, m || 0, 0, 0);
-    return d.toISOString();
-};
-const kcalForAmount = (kcalPer100g: number, amountG: number) =>
-    Math.round(((kcalPer100g || 0) * amountG) / 100);
 
 export default function AddMealScreen() {
     const router = useRouter();
