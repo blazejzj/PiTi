@@ -188,9 +188,10 @@ export default function NutritionScreen() {
                         <View className="px-5 mb-2 flex-row items-center justify-between">
                             <Pressable
                                 onPress={handlePrevWeek}
-                                className="px-2 py-1"
+                                hitSlop={16}
+                                className="px-3 py-2 rounded-full bg-neutral-100 border border-neutral-200"
                             >
-                                <Text className="text-neutral-700">{`←`}</Text>
+                                <Text className="text-neutral-700 text-base">{`←`}</Text>
                             </Pressable>
 
                             <ScrollView
@@ -209,6 +210,7 @@ export default function NutritionScreen() {
                                             onPress={() =>
                                                 setSelectedDate(new Date(date))
                                             }
+                                            hitSlop={8}
                                             className={`px-5 py-2 mr-2 rounded-full border ${
                                                 active
                                                     ? "bg-green-500 border-green-500"
@@ -232,10 +234,15 @@ export default function NutritionScreen() {
                             <Pressable
                                 onPress={handleNextWeek}
                                 disabled={isThisWeek}
-                                className="px-2 py-1"
+                                hitSlop={16}
+                                className={`px-3 py-2 rounded-full border ${
+                                    isThisWeek
+                                        ? "bg-neutral-50 border-neutral-100"
+                                        : "bg-neutral-100 border-neutral-200"
+                                }`}
                             >
                                 <Text
-                                    className={`${
+                                    className={`text-base ${
                                         isThisWeek
                                             ? "text-neutral-300"
                                             : "text-neutral-700"
