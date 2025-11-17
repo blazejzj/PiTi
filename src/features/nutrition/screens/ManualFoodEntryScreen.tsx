@@ -14,6 +14,7 @@ import { account } from "../../../services/appwrite/appwrite";
 import { foodItemRepo } from "../repository/foodItemRepo";
 import { useMealDraft } from "../state/useMealDraft";
 import ScreenContainer from "../../auth/components/ScreenContainer";
+import Toast from "react-native-toast-message";
 
 type CustomFoodInputs = {
     foodName: string;
@@ -63,12 +64,18 @@ export default function ManualFoodEntryScreen() {
                 proteinPer100g: newFood.proteinPer100g ?? 0,
             });
             reset();
-            // TODO: Change to TOAST or somerthing
-            Alert.alert("Saved!", `${newFood.name} added to your meal.`);
+            Toast.show({
+                type: "success",
+                text1: "Saved!",
+                text2: `${newFood.name} added to your meal.`,
+            });
             router.push("/food/addMeal");
         } catch {
-            // TODO: Change to TOAST or something
-            Alert.alert("Error", "Could not save this food. Try again.");
+            Toast.show({
+                type: "error",
+                text1: "Error",
+                text2: "Could not save this food. Try again.",
+            });
         }
     };
 
