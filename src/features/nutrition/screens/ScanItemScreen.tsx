@@ -11,6 +11,7 @@ import { account } from "../../../services/appwrite/appwrite";
 import { foodItemRepo } from "../repository/foodItemRepo";
 import { useMealDraft } from "../state/useMealDraft";
 import ScreenContainer from "../../auth/components/ScreenContainer";
+import { Toast } from "react-native-toast-message/lib/src/Toast";
 
 const COOLDOWN_MS = 2000;
 
@@ -71,27 +72,32 @@ export default function ScanItemScreen() {
                         fatPer100g: found.fatPer100g ?? 0,
                         proteinPer100g: found.proteinPer100g ?? 0,
                     });
-                    // TODO: CHANGE to Toast maybe
-                    Alert.alert("Added!", `${found.name} added to your meal.`);
+
+                    Toast.show({
+                        type: "success",
+                        text1: "Added!",
+                        text2: `${found.name} added to your meal.`,
+                    });
+
                     router.push("/food/addMeal");
                 } else {
-                    // TODO: CHANGE to Toast maybe
-                    Alert.alert(
-                        "Not found",
-                        "This item is not in your list. Add it manually."
-                    );
+                    Toast.show({
+                        type: "info",
+                        text1: "Not found",
+                        text2: "This item is not in your list. Add it manually.",
+                    });
 
-                    // TODO: we're looping between scan -> manual -> scan -> manual if user keeps scanning new unknown barcodes ehh
-                    // should maybe implement some sort of temporary "recently scanned" or "debounce lock" system,
-                    // or redirect user back to AddMeal after successful manual entry to break the loop.
-                    router.push({
+                    router.replace({
                         pathname: "/food/manualFoodEntry",
                         params: { barcode: code },
                     });
                 }
             } catch {
-                // TODO: CHANGE to Toast maybe
-                Alert.alert("Error", "Could not process scan. Try again.");
+                Toast.show({
+                    type: "error",
+                    text1: "Error",
+                    text2: "Could not process scan. Try again.",
+                });
             } finally {
                 setTimeout(() => {
                     scanningRef.current = false;
