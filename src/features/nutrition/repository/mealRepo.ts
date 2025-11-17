@@ -1,10 +1,7 @@
 import { ID, Query } from "appwrite";
 import { tables, DB_ID, COL_MEAL } from "../../../services/appwrite/appwrite";
 import { CreateMealInput, MealRow } from "../models";
-
-// TODO: Consider removing this or expanding, talk through. Should we keep this or
-// make this more flexible?
-export type MealType = "Breakfast" | "Lunch" | "Dinner" | "Snacks";
+import { dayRange, startOfDayISO } from "../utils/date";
 
 const toModel = (row: any): MealRow => ({
     $id: row.$id,
@@ -17,22 +14,6 @@ const toModel = (row: any): MealRow => ({
     $createdAt: row.$createdAt,
     $updatedAt: row.$updatedAt,
 });
-
-// should probably be a helper somewhere but we keep here for now
-const startOfDayISO = (iso: string) => {
-    const d = new Date(iso);
-    d.setUTCHours(0, 0, 0, 0);
-    return d.toISOString();
-};
-
-// should probably be a helper somewhere but we keep here for now
-const dayRange = (iso: string) => {
-    const start = new Date(iso);
-    start.setUTCHours(0, 0, 0, 0);
-    const end = new Date(start);
-    end.setUTCDate(end.getUTCDate() + 1);
-    return { startISO: start.toISOString(), endISO: end.toISOString() };
-};
 
 export const mealRepo = {
     // so here we create a new meal, based on input

@@ -5,11 +5,7 @@ import {
     COL_MEAL_ITEM,
 } from "../../../services/appwrite/appwrite";
 import { CreateMealItemInput, MealItem } from "../models";
-
-// small helpers maybe should be moved elsewhere
-const round = (n: number) => Math.round(n);
-const fromPer100g = (per100: number | null | undefined, amountG: number) =>
-    per100 == null ? 0 : round((per100 * amountG) / 100);
+import { fromPer100g } from "../utils/nutrition";
 
 const toModel = (row: any): MealItem => ({
     $id: row.$id,

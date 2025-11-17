@@ -5,12 +5,13 @@ import { useEffect, useMemo, useState } from "react";
 import Button from "../../../components/Button";
 import FormInput from "../../../components/FormInput";
 import { account } from "../../../services/appwrite/appwrite";
-import { MealType, mealRepo } from "../repository/mealRepo";
+import { mealRepo } from "../repository/mealRepo";
 import { foodItemRepo } from "../repository/foodItemRepo";
 import { mealItemRepo } from "../repository/mealItemRepo";
 import { useMealDraft } from "../state/useMealDraft";
 import MacroPill from "../components/MacroPill";
 import ScreenContainer from "../../auth/components/ScreenContainer";
+import { MealType } from "../models";
 
 type MealFormInputs = { mealName: string; notes: string };
 
