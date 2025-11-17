@@ -1,26 +1,25 @@
 import { useRouter } from "expo-router";
-import { useState, useMemo } from "react";
+import { useMemo } from "react";
 import { View, Text, FlatList, Pressable, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Button from "../../../components/Button";
-import { DummyMeals } from "../../../lib/dummyDataMeal";
 import MealItem from "../components/MealItem";
-import { Meal } from "../models";
 import MacroPill from "../components/MacroPill";
+import { useDailyMeals } from "../hooks/useDailyMeals";
+import { useUserNutritionTargets } from "../hooks/useUserNutritionTargets";
 
 export default function NutritionScreen() {
     const router = useRouter();
-    const [meals, setMeals] = useState<Meal[]>(DummyMeals);
 
+    const { kcalGoal, loading: targetsLoading } = useUserNutritionTargets();
+
+    // Use memos to avoid recalculations on each render
+    const todayISO = useMemo(() => new Date().toISOString(), []);
+    const { meals, loading } = useDailyMeals(todayISO);
     const totalKcal = useMemo(
         () => meals.reduce((sum, m) => sum + m.totalKcal, 0),
         [meals]
     );
-    // TODO: Fetch user's kcal goal from settings
-    // For now, we use a fixed value
-    const kcalGoal = 2500;
-    const pct = Math.min(100, (totalKcal / kcalGoal) * 100);
-
     const totalCarbs = useMemo(
         () => meals.reduce((s, m) => s + m.carbs, 0),
         [meals]
@@ -34,15 +33,16 @@ export default function NutritionScreen() {
         [meals]
     );
 
-    // TODO: Implement real weekday selection
+    const goal = kcalGoal ?? 2000; // TODO: Unsure if we need a fallback here
+    const pct = Math.min(100, goal === 0 ? 0 : (totalKcal / goal) * 100);
+
     const WEEKDAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-    const selectedDay = "Mon";
+    const selectedDay = "Mon"; // TODO: make dynamic
 
     const handleAddMeal = () => router.push("/food/addMeal");
 
     return (
         <SafeAreaView className="flex-1 bg-white">
-            {/* TODO: Eh, btw this is dummy data, we should get real added meals from DB */}
             <FlatList
                 data={meals}
                 keyExtractor={(item) => item.id}
@@ -53,10 +53,10 @@ export default function NutritionScreen() {
                     <View>
                         <View className="px-5 pt-4">
                             <View className="bg-white border border-neutral-200 rounded-3xl shadow-sm p-5 mb-6">
-                                {/* TODO: Should be dynamic together with date under */}
                                 <Text className="text-sm text-neutral-500 mb-1">
                                     Today
                                 </Text>
+                                {/* TODO: formater dato dynamisk */}
                                 <Text className="text-2xl font-bold text-neutral-900 mb-3">
                                     Monday, 1 September
                                 </Text>
@@ -66,7 +66,7 @@ export default function NutritionScreen() {
                                         {totalKcal}
                                     </Text>
                                     <Text className="text-base font-medium text-neutral-500">
-                                        / {kcalGoal} kcal
+                                        / {goal} kcal
                                     </Text>
                                 </View>
 
@@ -91,14 +91,20 @@ export default function NutritionScreen() {
                                         value={`${totalFat}g`}
                                     />
                                 </View>
+
+                                {(loading || targetsLoading) && (
+                                    <Text className="text-xs text-neutral-400 mt-2">
+                                        Loading data...
+                                    </Text>
+                                )}
                             </View>
                         </View>
+
                         <ScrollView
                             horizontal
                             showsHorizontalScrollIndicator={false}
                             className="mb-5 px-5"
                         >
-                            {/*plz no judge, we used map because the list is small and static, we know about FlatList*/}
                             {WEEKDAYS.map((day) => {
                                 const active = day === selectedDay;
                                 return (

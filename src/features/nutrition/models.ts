@@ -11,6 +11,21 @@ export const MEAL_TYPES: MealType[] = [
 
 // DB MODELS
 
+export type UserNutritionProfile = {
+    $id: string;
+    userId: string;
+    heightCm: number | null;
+    weightKg: number | null;
+    age: number | null;
+    sex: string | null;
+    dailyKcalTarget: number | null;
+    carbTargetG: number | null;
+    fatTargetG: number | null;
+    proteinTargetG: number | null;
+    $createdAt?: string;
+    $updatedAt?: string;
+};
+
 export type FoodItem = {
     $id: string;
     userId: string;

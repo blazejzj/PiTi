@@ -83,4 +83,15 @@ export const foodItemRepo = {
         // map to model and return if exists
         return res.rows[0] ? toModel(res.rows[0]) : null;
     },
+
+    // list food items by ids
+    async listByIds(ids: string[]): Promise<FoodItem[]> {
+        if (ids.length === 0) return [];
+        const res = await tables.listRows({
+            databaseId: DB_ID,
+            tableId: COL_FOOD_ITEM,
+            queries: [Query.equal("$id", ids), Query.limit(ids.length)],
+        });
+        return res.rows.map(toModel);
+    },
 };
