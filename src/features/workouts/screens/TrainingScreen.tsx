@@ -115,7 +115,11 @@ export default function TrainingScreen() {
                         className={`flex-row justify-between items-center py-3 ${index < workouts.length - 1 ? 'border-b border-gray-200' : ''}`}
                 //TODO: Navigate to session details screen 
                 onPress={() => {
-                    Alert.alert("TODO", "This will take you to the interactive workout session screen!");
+                    router.push({ 
+                        pathname: '/training/activeWorkout',
+                        params: { workoutId: session.$id },
+
+                })
                 }}
                 
                 onLongPress={() => {
