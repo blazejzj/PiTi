@@ -1,17 +1,44 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { account } from "../../../services/appwrite/appwrite";
 import { mealRepo } from "../repository/mealRepo";
 import { mealItemRepo } from "../repository/mealItemRepo";
-import type { Meal, MealRow, MealItem } from "../models";
+import { foodItemRepo } from "../repository/foodItemRepo";
+import type {
+    Meal,
+    MealRow,
+    MealItem,
+    FoodItem,
+    LoggedFoodItemDisplay,
+} from "../models";
 
 type DailyMealsState = {
     meals: Meal[];
     loading: boolean;
     error: string | null;
+    refresh: () => Promise<void>;
+    deleteMeal: (mealId: string) => Promise<void>;
 };
 
-const mapToViewMeal = (mealRow: MealRow, mealItems: MealItem[]): Meal => {
-    const totals = mealItems.reduce(
+const buildLoggedItems = (
+    items: MealItem[],
+    foodMap: Record<string, FoodItem>
+): LoggedFoodItemDisplay[] =>
+    items.map((it) => {
+        const fi = foodMap[it.foodItemId];
+        return {
+            mealItemId: it.$id,
+            name: fi?.name ?? "Unknown food",
+            amountG: it.amountG ?? 0,
+            kcal: Math.round(it.kcal ?? 0),
+        };
+    });
+
+const mapToViewMeal = (
+    mealRow: MealRow,
+    items: MealItem[],
+    foodMap: Record<string, FoodItem>
+): Meal => {
+    const totals = items.reduce(
         (acc, it) => {
             acc.kcal += it.kcal ?? 0;
             acc.carbs += it.carbG ?? 0;
@@ -31,64 +58,86 @@ const mapToViewMeal = (mealRow: MealRow, mealItems: MealItem[]): Meal => {
         carbs: Math.round(totals.carbs),
         protein: Math.round(totals.protein),
         fat: Math.round(totals.fat),
-        foodItems: [],
+        foodItems: buildLoggedItems(items, foodMap),
     };
 };
 
 export function useDailyMeals(dateISO: string): DailyMealsState {
-    const [state, setState] = useState<DailyMealsState>({
-        meals: [],
-        loading: true,
-        error: null,
-    });
+    const [meals, setMeals] = useState<Meal[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
-    useEffect(() => {
-        let cancelled = false;
+    const refresh = useCallback(async () => {
+        try {
+            setLoading(true);
+            setError(null);
 
-        const run = async () => {
-            try {
-                setState((s) => ({ ...s, loading: true, error: null }));
+            const user = await account.get();
+            const mealRows: MealRow[] = await mealRepo.listByDate(
+                user.$id,
+                dateISO
+            );
 
-                const user = await account.get();
+            // get all meal items for each meal
+            const allMealItemsPerMeal: MealItem[][] = await Promise.all(
+                mealRows.map((m) => mealItemRepo.listByMeal(m.$id)) // MealItem[] that is
+            );
 
-                const mealRows: MealRow[] = await mealRepo.listByDate(
-                    user.$id,
-                    dateISO
-                );
+            const allFoodItemIds = Array.from(
+                new Set(
+                    allMealItemsPerMeal
+                        .flat()
+                        .map((it) => it.foodItemId)
+                        .filter(Boolean)
+                )
+            );
 
-                const mealsWithItems = await Promise.all(
-                    mealRows.map(async (m) => {
-                        const items = (await mealItemRepo.listByMeal(
-                            m.$id
-                        )) as MealItem[];
-                        return mapToViewMeal(m, items);
-                    })
-                );
+            // get foodItems once
+            const foodItems: FoodItem[] =
+                allFoodItemIds.length > 0
+                    ? await foodItemRepo.listByIds(allFoodItemIds)
+                    : [];
+            const foodMap: Record<string, FoodItem> = {};
+            foodItems.forEach((fi) => {
+                foodMap[fi.$id] = fi;
+            });
 
-                if (!cancelled) {
-                    setState({
-                        meals: mealsWithItems,
-                        loading: false,
-                        error: null,
-                    });
-                }
-            } catch (e: any) {
-                if (!cancelled) {
-                    setState({
-                        meals: [],
-                        loading: false,
-                        error: e?.message ?? "Failed to load meals",
-                    });
-                }
-            }
-        };
+            // bygg view-modell
+            const mealsWithItems: Meal[] = mealRows.map((m, idx) =>
+                mapToViewMeal(m, allMealItemsPerMeal[idx], foodMap)
+            );
 
-        run();
-
-        return () => {
-            cancelled = true;
-        };
+            setMeals(mealsWithItems);
+        } catch (e: any) {
+            setError(e?.message ?? "Failed to load meals");
+            setMeals([]);
+        } finally {
+            setLoading(false);
+        }
     }, [dateISO]);
 
-    return state;
+    useEffect(() => {
+        refresh();
+    }, [refresh]);
+
+    const deleteMeal = useCallback(async (mealId: string) => {
+        try {
+            setLoading(true);
+            setError(null);
+
+            // delete all meal_items first
+            await mealItemRepo.deleteByMeal(mealId);
+            // delete the meal itself
+            await mealRepo.delete(mealId);
+
+            // optimistic update in state
+            setMeals((prev) => prev.filter((m) => m.id !== mealId));
+        } catch (e: any) {
+            setError(e?.message ?? "Failed to delete meal");
+        } finally {
+            setLoading(false);
+        }
+    }, []);
+
+    return { meals, loading, error, refresh, deleteMeal };
 }

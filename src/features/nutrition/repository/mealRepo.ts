@@ -63,4 +63,13 @@ export const mealRepo = {
         });
         return res.rows.map(toModel);
     },
+
+    // Delete meal by id
+    async delete(mealId: string): Promise<void> {
+        await tables.deleteRow({
+            databaseId: DB_ID,
+            tableId: COL_MEAL,
+            rowId: mealId,
+        });
+    },
 };

@@ -15,7 +15,7 @@ export default function NutritionScreen() {
 
     // Use memos to avoid recalculations on each render
     const todayISO = useMemo(() => new Date().toISOString(), []);
-    const { meals, loading } = useDailyMeals(todayISO);
+    const { meals, loading, deleteMeal } = useDailyMeals(todayISO);
     const totalKcal = useMemo(
         () => meals.reduce((sum, m) => sum + m.totalKcal, 0),
         [meals]
@@ -46,7 +46,12 @@ export default function NutritionScreen() {
             <FlatList
                 data={meals}
                 keyExtractor={(item) => item.id}
-                renderItem={({ item }) => <MealItem meal={item} />}
+                renderItem={({ item }) => (
+                    <MealItem
+                        meal={item}
+                        onDelete={() => deleteMeal(item.id)}
+                    />
+                )}
                 showsVerticalScrollIndicator={false}
                 ItemSeparatorComponent={() => <View className="h-4" />}
                 ListHeaderComponent={() => (
