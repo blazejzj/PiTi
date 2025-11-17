@@ -4,40 +4,14 @@ import {
     DB_ID,
     COL_MEAL_ITEM,
 } from "../../../services/appwrite/appwrite";
-
-export type CreateMealItemInput = {
-    mealId: string;
-    foodItemId: string;
-    amountG: number; // grams eaten
-    kcalPer100g?: number | null;
-    carbPer100g?: number | null;
-    fatPer100g?: number | null;
-    proteinPer100g?: number | null;
-    kcal?: number | null;
-    carbG?: number | null;
-    fatG?: number | null;
-    proteinG?: number | null;
-};
-
-export type MealItemRow = {
-    $id: string;
-    mealId: string;
-    foodItemId: string;
-    amountG: number;
-    kcal: number;
-    carbG: number;
-    fatG: number;
-    proteinG: number;
-    $createdAt: string;
-    $updatedAt: string;
-};
+import { CreateMealItemInput, MealItem } from "../models";
 
 // small helpers maybe should be moved elsewhere
 const round = (n: number) => Math.round(n);
 const fromPer100g = (per100: number | null | undefined, amountG: number) =>
     per100 == null ? 0 : round((per100 * amountG) / 100);
 
-const toModel = (row: any): MealItemRow => ({
+const toModel = (row: any): MealItem => ({
     $id: row.$id,
     mealId: row.mealId,
     foodItemId: row.foodItemId,
@@ -52,7 +26,7 @@ const toModel = (row: any): MealItemRow => ({
 
 export const mealItemRepo = {
     // create a new meal item
-    async create(input: CreateMealItemInput): Promise<MealItemRow> {
+    async create(input: CreateMealItemInput): Promise<MealItem> {
         const kcal =
             input.kcal ?? fromPer100g(input.kcalPer100g ?? null, input.amountG);
         const carbG =
@@ -83,7 +57,7 @@ export const mealItemRepo = {
     },
 
     // get meal item by id
-    async get(mealItemId: string): Promise<MealItemRow> {
+    async get(mealItemId: string): Promise<MealItem> {
         const row = await tables.getRow({
             databaseId: DB_ID,
             tableId: COL_MEAL_ITEM,
@@ -93,7 +67,7 @@ export const mealItemRepo = {
     },
 
     // list all meal items for a given meal
-    async listByMeal(mealId: string): Promise<MealItemRow[]> {
+    async listByMeal(mealId: string): Promise<MealItem[]> {
         const res = await tables.listRows({
             databaseId: DB_ID,
             tableId: COL_MEAL_ITEM,

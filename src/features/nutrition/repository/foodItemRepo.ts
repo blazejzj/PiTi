@@ -4,17 +4,7 @@ import {
     DB_ID,
     COL_FOOD_ITEM,
 } from "../../../services/appwrite/appwrite";
-import type { FoodItem } from "../models";
-
-export type CreateFoodItemInput = {
-    userId: string;
-    name: string;
-    barcode?: string;
-    kcalPer100g: number;
-    carbPer100g: number;
-    fatPer100g: number;
-    proteinPer100g: number;
-};
+import type { CreateFoodItemInput, FoodItem } from "../models";
 
 // helper which maps Appwrite row to FoodItem model
 const toModel = (row: any): FoodItem => ({

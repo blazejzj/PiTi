@@ -1,29 +1,10 @@
 import { ID, Query } from "appwrite";
 import { tables, DB_ID, COL_MEAL } from "../../../services/appwrite/appwrite";
+import { CreateMealInput, MealRow } from "../models";
 
 // TODO: Consider removing this or expanding, talk through. Should we keep this or
 // make this more flexible?
 export type MealType = "Breakfast" | "Lunch" | "Dinner" | "Snacks";
-
-export type CreateMealInput = {
-    userId: string;
-    name: string;
-    type?: MealType;
-    timeISO: string; // example: new Date().toISOString()
-    notes?: string;
-};
-
-export type MealRow = {
-    $id: string;
-    userId: string;
-    name: string;
-    type: MealType;
-    timeISO: string; // datetime in Appwrite
-    mealDate: string; // datetime in Appwrite
-    notes?: string;
-    $createdAt: string;
-    $updatedAt: string;
-};
 
 const toModel = (row: any): MealRow => ({
     $id: row.$id,
