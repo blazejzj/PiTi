@@ -6,6 +6,9 @@ import {
     ScrollView,
     Platform,
     Alert,
+    KeyboardAvoidingView,
+    TouchableWithoutFeedback,
+    Keyboard,
 } from "react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import Button from "../../../components/Button";
@@ -69,7 +72,7 @@ export default function ManualFoodEntryScreen() {
                 text1: "Saved!",
                 text2: `${newFood.name} added to your meal.`,
             });
-            router.push("/food/addMeal");
+            router.replace("/food/addMeal");
         } catch {
             Toast.show({
                 type: "error",
@@ -83,94 +86,113 @@ export default function ManualFoodEntryScreen() {
 
     return (
         <ScreenContainer className="flex-1 bg-white p-safe">
-            <View className="px-5 pb-3 flex-row items-center">
-                <Pressable onPress={() => router.back()}>
-                    <Text className="font-semibold text-neutral-700">
-                        ← Back
-                    </Text>
-                </Pressable>
-                <Text className="flex-1 text-center text-2xl font-bold text-neutral-900 mr-10">
-                    Add Food
-                </Text>
-            </View>
-
-            <ScrollView
-                className="flex-1"
-                showsVerticalScrollIndicator={false}
-                contentContainerStyle={{
-                    paddingBottom: Platform.OS === "ios" ? 140 : 120,
-                }}
+            <KeyboardAvoidingView
+                style={{ flex: 1 }}
+                behavior={Platform.OS === "ios" ? "padding" : "height"}
             >
-                <View className="px-5">
-                    <View className="bg-white border border-neutral-200 rounded-3xl shadow-sm p-5 mb-6">
-                        <Text className="text-neutral-700 font-medium mb-3">
-                            Food information
-                        </Text>
-                        <FormInput
-                            control={control}
-                            name="foodName"
-                            label="Food name"
-                            placeholder="e.g. Homemade Protein Bar"
-                            autoCapitalize="words"
-                            rules={{ required: "Name is required" }}
-                        />
-                        <FormInput
-                            control={control}
-                            name="barcode"
-                            label="Barcode"
-                            placeholder="e.g. 1234567890123"
-                            keyboardType="numeric"
-                            disabled={!!prefilledBarcode}
-                        />
-                    </View>
+                <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                    <View className="flex-1">
+                        <View className="px-5 pb-3 flex-row items-center">
+                            <Pressable onPress={() => router.back()}>
+                                <Text className="font-semibold text-neutral-700">
+                                    ← Back
+                                </Text>
+                            </Pressable>
+                            <Text className="flex-1 text-center text-2xl font-bold text-neutral-900 mr-10">
+                                Add Food
+                            </Text>
+                        </View>
 
-                    <View className="bg-white border border-neutral-200 rounded-3xl shadow-sm p-5">
-                        <Text className="text-neutral-700 font-medium mb-3">
-                            Nutritional values (per 100g)
-                        </Text>
-                        <View className="gap-3">
-                            <FormInput
-                                control={control}
-                                name="kcal"
-                                label="Calories (kcal)"
-                                keyboardType="numeric"
-                                rules={{ required: "Kcal is required" }}
-                            />
-                            <FormInput
-                                control={control}
-                                name="protein"
-                                label="Protein (g)"
-                                keyboardType="numeric"
-                                rules={{ required: "Protein is required" }}
-                            />
-                            <FormInput
-                                control={control}
-                                name="carbs"
-                                label="Carbohydrates (g)"
-                                keyboardType="numeric"
-                                rules={{ required: "Carbs are required" }}
-                            />
-                            <FormInput
-                                control={control}
-                                name="fat"
-                                label="Fat (g)"
-                                keyboardType="numeric"
-                                rules={{ required: "Fat is required" }}
+                        <ScrollView
+                            className="flex-1"
+                            showsVerticalScrollIndicator={false}
+                            keyboardShouldPersistTaps="handled"
+                            contentContainerStyle={{
+                                paddingBottom:
+                                    Platform.OS === "ios" ? 140 : 120,
+                            }}
+                        >
+                            <View className="px-5">
+                                <View className="bg-white border border-neutral-200 rounded-3xl shadow-sm p-5 mb-6">
+                                    <Text className="text-neutral-700 font-medium mb-3">
+                                        Food information
+                                    </Text>
+                                    <FormInput
+                                        control={control}
+                                        name="foodName"
+                                        label="Food name"
+                                        placeholder="e.g. Homemade Protein Bar"
+                                        autoCapitalize="words"
+                                        rules={{ required: "Name is required" }}
+                                    />
+                                    <FormInput
+                                        control={control}
+                                        name="barcode"
+                                        label="Barcode"
+                                        placeholder="e.g. 1234567890123"
+                                        keyboardType="numeric"
+                                        disabled={!!prefilledBarcode}
+                                    />
+                                </View>
+
+                                <View className="bg-white border border-neutral-200 rounded-3xl shadow-sm p-5">
+                                    <Text className="text-neutral-700 font-medium mb-3">
+                                        Nutritional values (per 100g)
+                                    </Text>
+                                    <View className="gap-3">
+                                        <FormInput
+                                            control={control}
+                                            name="kcal"
+                                            label="Calories (kcal)"
+                                            keyboardType="numeric"
+                                            rules={{
+                                                required: "Kcal is required",
+                                            }}
+                                        />
+                                        <FormInput
+                                            control={control}
+                                            name="protein"
+                                            label="Protein (g)"
+                                            keyboardType="numeric"
+                                            rules={{
+                                                required: "Protein is required",
+                                            }}
+                                        />
+                                        <FormInput
+                                            control={control}
+                                            name="carbs"
+                                            label="Carbohydrates (g)"
+                                            keyboardType="numeric"
+                                            rules={{
+                                                required: "Carbs are required",
+                                            }}
+                                        />
+                                        <FormInput
+                                            control={control}
+                                            name="fat"
+                                            label="Fat (g)"
+                                            keyboardType="numeric"
+                                            rules={{
+                                                required: "Fat is required",
+                                            }}
+                                        />
+                                    </View>
+                                </View>
+                            </View>
+                        </ScrollView>
+
+                        <View className="px-5 pb-8 pt-4 bg-white border-t border-neutral-200">
+                            <Button
+                                title="Save and Add to Meal"
+                                variant="primary"
+                                onPress={handleAddCustomFood}
+                                textClassName="text-lg font-bold text-white"
+                                className="w-full rounded-2xl shadow-md"
                             />
                         </View>
                     </View>
-                </View>
-            </ScrollView>
-
-            <View className="px-5 pb-8 pt-4 bg-white border-t border-neutral-200">
-                <Button
-                    title="Save and Add to Meal"
-                    variant="primary"
-                    onPress={handleAddCustomFood}
-                    textClassName="text-lg font-bold text-white"
-                    className="w-full rounded-2xl shadow-md"
-                />
-            </View>
+                </TouchableWithoutFeedback>
+            </KeyboardAvoidingView>
         </ScreenContainer>
     );
 }

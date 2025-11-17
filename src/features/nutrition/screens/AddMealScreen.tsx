@@ -86,7 +86,7 @@ export default function AddMealScreen() {
 
         // clear draft and go back
         draft.clear();
-        router.back();
+        router.replace("/food");
     };
 
     const handleAddMeal = handleSubmit(onSubmit);
@@ -215,72 +215,71 @@ export default function AddMealScreen() {
                             </Text>
                         ) : (
                             <View className="mt-1">
-                                {draft.items.length === 0 ? (
-                                    <Text className="text-neutral-500">
-                                        No items yet. Add or scan to start.
-                                    </Text>
-                                ) : (
-                                    <View className="mt-1">
-                                        {draft.items.map((it, idx) => (
-                                            <View
-                                                key={`${it.foodItemId}-${idx}`}
-                                                className="flex-row items-center py-3 border-b border-neutral-100"
+                                {draft.items.map((it, idx) => (
+                                    <View
+                                        key={`${it.foodItemId}-${idx}`}
+                                        className="flex-row items-center py-3 border-b border-neutral-100"
+                                    >
+                                        <View className="flex-1 pr-3">
+                                            <Text
+                                                className="text-neutral-900 font-medium"
+                                                numberOfLines={1}
                                             >
-                                                <View className="flex-1 pr-3">
-                                                    <Text
-                                                        className="text-neutral-900 font-medium"
-                                                        numberOfLines={1}
-                                                    >
-                                                        {it.name}
-                                                    </Text>
+                                                {it.name}
+                                            </Text>
 
-                                                    <View className="flex-row items-center mt-1">
-                                                        <TextInput
-                                                            value={String(
-                                                                it.amountG
-                                                            )}
-                                                            keyboardType="numeric"
-                                                            onChangeText={(
-                                                                text
-                                                            ) => {
-                                                                const val =
-                                                                    parseInt(
-                                                                        text,
-                                                                        10
-                                                                    );
-                                                                if (
-                                                                    isNaN(val)
-                                                                ) {
-                                                                    draft.updateItemAmount(
-                                                                        it.foodItemId,
-                                                                        0
-                                                                    );
-                                                                } else {
-                                                                    draft.updateItemAmount(
-                                                                        it.foodItemId,
-                                                                        val
-                                                                    );
-                                                                }
-                                                            }}
-                                                            className="w-16 px-2 py-1 rounded-lg border border-neutral-300 text-sm text-neutral-900 mr-1"
-                                                        />
-                                                        <Text className="text-xs text-neutral-500">
-                                                            g
-                                                        </Text>
-                                                    </View>
-                                                </View>
-
-                                                <Text className="text-neutral-900 font-semibold">
-                                                    {kcalForAmount(
-                                                        it.kcalPer100g,
-                                                        it.amountG
-                                                    )}{" "}
-                                                    kcal
+                                            <View className="flex-row items-center mt-1">
+                                                <TextInput
+                                                    value={String(it.amountG)}
+                                                    keyboardType="numeric"
+                                                    onChangeText={(text) => {
+                                                        const val = parseInt(
+                                                            text,
+                                                            10
+                                                        );
+                                                        if (isNaN(val)) {
+                                                            draft.updateItemAmount(
+                                                                it.foodItemId,
+                                                                0
+                                                            );
+                                                        } else {
+                                                            draft.updateItemAmount(
+                                                                it.foodItemId,
+                                                                val
+                                                            );
+                                                        }
+                                                    }}
+                                                    className="w-16 px-2 py-1 rounded-lg border border-neutral-300 text-sm text-neutral-900 mr-1"
+                                                />
+                                                <Text className="text-xs text-neutral-500">
+                                                    g
                                                 </Text>
                                             </View>
-                                        ))}
+                                        </View>
+
+                                        <View className="items-end">
+                                            <Text className="text-neutral-900 font-semibold">
+                                                {kcalForAmount(
+                                                    it.kcalPer100g,
+                                                    it.amountG
+                                                )}{" "}
+                                                kcal
+                                            </Text>
+                                            <Pressable
+                                                onPress={() =>
+                                                    draft.removeItem(
+                                                        it.foodItemId
+                                                    )
+                                                }
+                                                className="mt-1"
+                                            >
+                                                <Text className="text-xs text-red-500">
+                                                    Remove
+                                                </Text>
+                                            </Pressable>
+                                        </View>
                                     </View>
-                                )}
+                                ))}
                             </View>
                         )}
                     </View>
@@ -322,8 +321,6 @@ export default function AddMealScreen() {
                     </View>
                 </View>
             </ScrollView>
-
-            {/* Sticky footer CTA */}
             <View className="px-5 pb-8 pt-4 bg-white border-t border-neutral-200">
                 <Button
                     title="+ Add Meal"
