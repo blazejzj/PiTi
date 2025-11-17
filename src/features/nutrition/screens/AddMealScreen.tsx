@@ -15,6 +15,7 @@ import { MealType } from "../models";
 import { MEAL_TYPES } from "../models";
 import { toTodayISOWithTime } from "../utils/date";
 import { kcalForAmount } from "../utils/nutrition";
+import DateTimePicker from "@react-native-community/datetimepicker";
 
 type MealFormInputs = { mealName: string; notes: string };
 
@@ -24,10 +25,17 @@ export default function AddMealScreen() {
     const [selectedMealType, setSelectedMealType] =
         useState<MealType>("Breakfast");
     const [selectedTime, setSelectedTime] = useState<string>("08:00");
+    const [showTimePicker, setShowTimePicker] = useState(false);
+
+    const timeDate = useMemo(() => {
+        const [h, m] = selectedTime.split(":").map(Number);
+        const d = new Date();
+        d.setHours(h || 0, m || 0, 0, 0);
+        return d;
+    }, [selectedTime]);
 
     const draft = useMealDraft();
 
-    // probably unnecessary use of useMemo here, and could use useState in draft directly
     const totals = useMemo(() => draft.totals(), [draft.items]);
     const totalKcal = totals.kcal;
 
@@ -153,23 +161,38 @@ export default function AddMealScreen() {
                             <Text className="text-base font-medium text-neutral-700 mb-2">
                                 Time
                             </Text>
+
                             <Pressable
-                                onPress={() =>
-                                    setSelectedTime((prev) =>
-                                        prev === "08:00" ? "12:00" : "08:00"
-                                    )
-                                }
+                                onPress={() => setShowTimePicker(true)}
                                 className="p-4 rounded-xl border border-neutral-200 bg-neutral-100 flex-row justify-between items-center"
                             >
                                 <Text className="text-neutral-900 text-base">
                                     {selectedTime}
                                 </Text>
-                                <Text>▼</Text>
                             </Pressable>
-                            {/* TODO: Implement real time picker this is shit */}
-                            <Text className="text-xs text-neutral-500 mt-1">
-                                Temporary time switcher.
-                            </Text>
+
+                            {showTimePicker && (
+                                <DateTimePicker
+                                    mode="time"
+                                    value={timeDate}
+                                    is24Hour={true}
+                                    display="spinner"
+                                    onChange={(event, date) => {
+                                        setShowTimePicker(false);
+                                        if (date) {
+                                            const h = date
+                                                .getHours()
+                                                .toString()
+                                                .padStart(2, "0");
+                                            const m = date
+                                                .getMinutes()
+                                                .toString()
+                                                .padStart(2, "0");
+                                            setSelectedTime(`${h}:${m}`);
+                                        }
+                                    }}
+                                />
+                            )}
                         </View>
                     </View>
 
@@ -192,36 +215,72 @@ export default function AddMealScreen() {
                             </Text>
                         ) : (
                             <View className="mt-1">
-                                {/* 
-                                    TODO: Add input or slider here so user can adjust amount eaten for ex. 60g instead of default 100g.
-                                    When changed, update it.amountG in draft.items and recalc kcal/macros with kcalForAmount() aw yes
-                                */}
-
-                                {draft.items.map((it, idx) => (
-                                    <View
-                                        key={`${it.foodItemId}-${idx}`}
-                                        className="flex-row justify-between items-center py-3 border-b border-neutral-100"
-                                    >
-                                        <View className="flex-1 pr-3">
-                                            <Text
-                                                className="text-neutral-900 font-medium"
-                                                numberOfLines={1}
+                                {draft.items.length === 0 ? (
+                                    <Text className="text-neutral-500">
+                                        No items yet. Add or scan to start.
+                                    </Text>
+                                ) : (
+                                    <View className="mt-1">
+                                        {draft.items.map((it, idx) => (
+                                            <View
+                                                key={`${it.foodItemId}-${idx}`}
+                                                className="flex-row items-center py-3 border-b border-neutral-100"
                                             >
-                                                {it.name}
-                                            </Text>
-                                            <Text className="text-xs text-neutral-500">
-                                                {it.amountG} g
-                                            </Text>
-                                        </View>
-                                        <Text className="text-neutral-900 font-semibold">
-                                            {kcalForAmount(
-                                                it.kcalPer100g,
-                                                it.amountG
-                                            )}{" "}
-                                            kcal
-                                        </Text>
+                                                <View className="flex-1 pr-3">
+                                                    <Text
+                                                        className="text-neutral-900 font-medium"
+                                                        numberOfLines={1}
+                                                    >
+                                                        {it.name}
+                                                    </Text>
+
+                                                    <View className="flex-row items-center mt-1">
+                                                        <TextInput
+                                                            value={String(
+                                                                it.amountG
+                                                            )}
+                                                            keyboardType="numeric"
+                                                            onChangeText={(
+                                                                text
+                                                            ) => {
+                                                                const val =
+                                                                    parseInt(
+                                                                        text,
+                                                                        10
+                                                                    );
+                                                                if (
+                                                                    isNaN(val)
+                                                                ) {
+                                                                    draft.updateItemAmount(
+                                                                        it.foodItemId,
+                                                                        0
+                                                                    );
+                                                                } else {
+                                                                    draft.updateItemAmount(
+                                                                        it.foodItemId,
+                                                                        val
+                                                                    );
+                                                                }
+                                                            }}
+                                                            className="w-16 px-2 py-1 rounded-lg border border-neutral-300 text-sm text-neutral-900 mr-1"
+                                                        />
+                                                        <Text className="text-xs text-neutral-500">
+                                                            g
+                                                        </Text>
+                                                    </View>
+                                                </View>
+
+                                                <Text className="text-neutral-900 font-semibold">
+                                                    {kcalForAmount(
+                                                        it.kcalPer100g,
+                                                        it.amountG
+                                                    )}{" "}
+                                                    kcal
+                                                </Text>
+                                            </View>
+                                        ))}
                                     </View>
-                                ))}
+                                )}
                             </View>
                         )}
                     </View>
