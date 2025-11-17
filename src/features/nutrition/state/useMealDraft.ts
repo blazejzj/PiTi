@@ -17,6 +17,7 @@ type MealDraftState = {
     addItem: (item: DraftItem) => void;
     removeItem: (foodItemId: string) => void;
     clear: () => void;
+    updateItemAmount: (foodItemId: string, amountG: number) => void;
     totals: () => {
         kcal: number;
         carb: number;
@@ -59,6 +60,14 @@ export const useMealDraft = create<MealDraftState>((set, get) => ({
 
     // clear the entire draft
     clear: () => set({ mealName: "", items: [] }),
+
+    // update amount for one item
+    updateItemAmount: (foodItemId, amountG) =>
+        set((state) => ({
+            items: state.items.map((i) =>
+                i.foodItemId === foodItemId ? { ...i, amountG: amountG } : i
+            ),
+        })),
 
     // calculate total kcal, carbs, fat, protein for all items so we can show summary later
     totals: () => {

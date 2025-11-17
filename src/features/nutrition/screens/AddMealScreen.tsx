@@ -5,28 +5,19 @@ import { useEffect, useMemo, useState } from "react";
 import Button from "../../../components/Button";
 import FormInput from "../../../components/FormInput";
 import { account } from "../../../services/appwrite/appwrite";
-import { MealType, mealRepo } from "../repository/mealRepo";
+import { mealRepo } from "../repository/mealRepo";
 import { foodItemRepo } from "../repository/foodItemRepo";
 import { mealItemRepo } from "../repository/mealItemRepo";
 import { useMealDraft } from "../state/useMealDraft";
 import MacroPill from "../components/MacroPill";
 import ScreenContainer from "../../auth/components/ScreenContainer";
+import { MealType } from "../models";
+import { MEAL_TYPES } from "../models";
+import { toTodayISOWithTime } from "../utils/date";
+import { kcalForAmount } from "../utils/nutrition";
+import DateTimePicker from "@react-native-community/datetimepicker";
 
 type MealFormInputs = { mealName: string; notes: string };
-
-// Like mentioned laready once, TODO: Shouuld maybe remove this or make it more flexible?
-// for now its okay
-const MEAL_TYPES: MealType[] = ["Breakfast", "Lunch", "Dinner", "Snacks"];
-
-// TODO: HELPERS, should probably go to utils later
-const toTodayISOWithTime = (hhmm: string) => {
-    const [h, m] = hhmm.split(":").map(Number);
-    const d = new Date();
-    d.setHours(h || 0, m || 0, 0, 0);
-    return d.toISOString();
-};
-const kcalForAmount = (kcalPer100g: number, amountG: number) =>
-    Math.round(((kcalPer100g || 0) * amountG) / 100);
 
 export default function AddMealScreen() {
     const router = useRouter();
@@ -34,10 +25,17 @@ export default function AddMealScreen() {
     const [selectedMealType, setSelectedMealType] =
         useState<MealType>("Breakfast");
     const [selectedTime, setSelectedTime] = useState<string>("08:00");
+    const [showTimePicker, setShowTimePicker] = useState(false);
+
+    const timeDate = useMemo(() => {
+        const [h, m] = selectedTime.split(":").map(Number);
+        const d = new Date();
+        d.setHours(h || 0, m || 0, 0, 0);
+        return d;
+    }, [selectedTime]);
 
     const draft = useMealDraft();
 
-    // probably unnecessary use of useMemo here, and could use useState in draft directly
     const totals = useMemo(() => draft.totals(), [draft.items]);
     const totalKcal = totals.kcal;
 
@@ -88,7 +86,7 @@ export default function AddMealScreen() {
 
         // clear draft and go back
         draft.clear();
-        router.back();
+        router.replace("/food");
     };
 
     const handleAddMeal = handleSubmit(onSubmit);
@@ -163,23 +161,38 @@ export default function AddMealScreen() {
                             <Text className="text-base font-medium text-neutral-700 mb-2">
                                 Time
                             </Text>
+
                             <Pressable
-                                onPress={() =>
-                                    setSelectedTime((prev) =>
-                                        prev === "08:00" ? "12:00" : "08:00"
-                                    )
-                                }
+                                onPress={() => setShowTimePicker(true)}
                                 className="p-4 rounded-xl border border-neutral-200 bg-neutral-100 flex-row justify-between items-center"
                             >
                                 <Text className="text-neutral-900 text-base">
                                     {selectedTime}
                                 </Text>
-                                <Text>▼</Text>
                             </Pressable>
-                            {/* TODO: Implement real time picker this is shit */}
-                            <Text className="text-xs text-neutral-500 mt-1">
-                                Temporary time switcher.
-                            </Text>
+
+                            {showTimePicker && (
+                                <DateTimePicker
+                                    mode="time"
+                                    value={timeDate}
+                                    is24Hour={true}
+                                    display="spinner"
+                                    onChange={(event, date) => {
+                                        setShowTimePicker(false);
+                                        if (date) {
+                                            const h = date
+                                                .getHours()
+                                                .toString()
+                                                .padStart(2, "0");
+                                            const m = date
+                                                .getMinutes()
+                                                .toString()
+                                                .padStart(2, "0");
+                                            setSelectedTime(`${h}:${m}`);
+                                        }
+                                    }}
+                                />
+                            )}
                         </View>
                     </View>
 
@@ -202,15 +215,10 @@ export default function AddMealScreen() {
                             </Text>
                         ) : (
                             <View className="mt-1">
-                                {/* 
-                                    TODO: Add input or slider here so user can adjust amount eaten for ex. 60g instead of default 100g.
-                                    When changed, update it.amountG in draft.items and recalc kcal/macros with kcalForAmount() aw yes
-                                */}
-
                                 {draft.items.map((it, idx) => (
                                     <View
                                         key={`${it.foodItemId}-${idx}`}
-                                        className="flex-row justify-between items-center py-3 border-b border-neutral-100"
+                                        className="flex-row items-center py-3 border-b border-neutral-100"
                                     >
                                         <View className="flex-1 pr-3">
                                             <Text
@@ -219,17 +227,57 @@ export default function AddMealScreen() {
                                             >
                                                 {it.name}
                                             </Text>
-                                            <Text className="text-xs text-neutral-500">
-                                                {it.amountG} g
-                                            </Text>
+
+                                            <View className="flex-row items-center mt-1">
+                                                <TextInput
+                                                    value={String(it.amountG)}
+                                                    keyboardType="numeric"
+                                                    onChangeText={(text) => {
+                                                        const val = parseInt(
+                                                            text,
+                                                            10
+                                                        );
+                                                        if (isNaN(val)) {
+                                                            draft.updateItemAmount(
+                                                                it.foodItemId,
+                                                                0
+                                                            );
+                                                        } else {
+                                                            draft.updateItemAmount(
+                                                                it.foodItemId,
+                                                                val
+                                                            );
+                                                        }
+                                                    }}
+                                                    className="w-16 px-2 py-1 rounded-lg border border-neutral-300 text-sm text-neutral-900 mr-1"
+                                                />
+                                                <Text className="text-xs text-neutral-500">
+                                                    g
+                                                </Text>
+                                            </View>
                                         </View>
-                                        <Text className="text-neutral-900 font-semibold">
-                                            {kcalForAmount(
-                                                it.kcalPer100g,
-                                                it.amountG
-                                            )}{" "}
-                                            kcal
-                                        </Text>
+
+                                        <View className="items-end">
+                                            <Text className="text-neutral-900 font-semibold">
+                                                {kcalForAmount(
+                                                    it.kcalPer100g,
+                                                    it.amountG
+                                                )}{" "}
+                                                kcal
+                                            </Text>
+                                            <Pressable
+                                                onPress={() =>
+                                                    draft.removeItem(
+                                                        it.foodItemId
+                                                    )
+                                                }
+                                                className="mt-1"
+                                            >
+                                                <Text className="text-xs text-red-500">
+                                                    Remove
+                                                </Text>
+                                            </Pressable>
+                                        </View>
                                     </View>
                                 ))}
                             </View>
@@ -273,8 +321,6 @@ export default function AddMealScreen() {
                     </View>
                 </View>
             </ScrollView>
-
-            {/* Sticky footer CTA */}
             <View className="px-5 pb-8 pt-4 bg-white border-t border-neutral-200">
                 <Button
                     title="+ Add Meal"
