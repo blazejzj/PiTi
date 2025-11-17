@@ -8,16 +8,17 @@ type Props = {
     onLogout: () => void; // container handles actual logout
 };
 
+// now displays REAL totals based on added meals, using the latest logic from last PR on nutrition(18) and updated useDaulyNutrition hook.)
+
 export default function DashboardScreen({ profile, userId, onLogout }: Props) {
-    // TODO: Replaced with real daily totatls. but.. using the dummy data for test right now. Cant seem to get any meals returned from hook after adding meals! Check why.
-    const { totals } = useDailyNutrition(userId);
+    const { totals, loading, error } = useDailyNutrition(userId);
 
     const target = profile.daily_kcal_target ?? 0;
     const today = totals.kcal;
     const remaining = Math.max(0, target - today);
 
     return (
-        <View className="flex-1 bg-white p-8">
+        <View className="flex-1 bg-white p-safe px-8 pt-20">
             <Text className="text-3xl font-bold">
                 Dashboard <Text className="theme-text-color">•</Text>
             </Text>
