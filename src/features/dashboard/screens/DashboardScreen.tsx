@@ -1,15 +1,19 @@
 import { View, Text, Pressable } from "react-native";
 import type { UserProfile } from "../../profile/models";
+import { useDailyNutrition } from "../../nutrition/hooks/useDailyNutrition";
 
 type Props = {
     profile: UserProfile; // already loaded profile (not null)
+    userId: string | null; // to be able to fetch nutrition data for dashboardscreen.
     onLogout: () => void; // container handles actual logout
 };
 
-export default function DashboardScreen({ profile, onLogout }: Props) {
-    // TODO: replace when we have real daily totals
+export default function DashboardScreen({ profile, userId, onLogout }: Props) {
+    // TODO: Replaced with real daily totatls. but.. using the dummy data for test right now. Cant seem to get any meals returned from hook after adding meals! Check why.
+    const { totals } = useDailyNutrition(userId);
+
     const target = profile.daily_kcal_target ?? 0;
-    const today = 0;
+    const today = totals.kcal;
     const remaining = Math.max(0, target - today);
 
     return (
@@ -34,13 +38,16 @@ export default function DashboardScreen({ profile, onLogout }: Props) {
             <View className="mt-4 rounded-2xl p-5 bg-neutral-100">
                 <Text className="text-xl font-semibold">Macros</Text>
                 <Text className="text-neutral-600 mt-1">
-                    Protein: {profile.protein_target_g ?? "—"} g
+                    Protein: {totals.proteinG.toFixed(1)}g /{" "}
+                    {profile.protein_target_g ?? "—"}g
                 </Text>
                 <Text className="text-neutral-600">
-                    Fat: {profile.fat_target_g ?? "—"} g
+                    Fat: {totals.fatG.toFixed(1)}g /{" "}
+                    {profile.fat_target_g ?? "—"} g
                 </Text>
                 <Text className="text-neutral-600">
-                    Carbs: {profile.carb_target_g ?? "—"} g
+                    Carbs: {totals.carbG.toFixed(1)}g /{" "}
+                    {profile.carb_target_g ?? "—"} g
                 </Text>
             </View>
 
