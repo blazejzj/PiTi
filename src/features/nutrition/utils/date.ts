@@ -20,3 +20,11 @@ export const toTodayISOWithTime = (hhmm: string) => {
     d.setHours(h || 0, m || 0, 0, 0);
     return d.toISOString();
 };
+
+export const isSameDay = (a: Date, b: Date): boolean => {
+    return (
+        a.getFullYear() === b.getFullYear() &&
+        a.getMonth() === b.getMonth() &&
+        a.getDate() === b.getDate()
+    );
+};
