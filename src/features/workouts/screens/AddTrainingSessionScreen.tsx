@@ -40,7 +40,7 @@ export default function AddTrainingSessionScreen() {
                 userId: DUMMY_USER_ID,
                 name: data.workoutName,
                 startedAt: new Date().toISOString(),
-                endedAt: new Date().toISOString(),
+                endedAt: null,
                 durationMinutes: parseInt(data.durationMinutes, 10) || null,
                 notes: data.notes || null,
                 caloriesBurned: null,
@@ -126,9 +126,7 @@ export default function AddTrainingSessionScreen() {
                     <Text className="text-lg font-bold text-neutral-800 mb-3">
                         Exercises: ({draftedExercises.length})
                     </Text>
-                    {/*{totalVolumeKg > 0 && (*/}
-                    {/*<Text className="text-sm font-bold text-green-700 mb-3">Total Weight Lifted: {totalVolumeKg} kg!</Text>
-            )}*/}
+                    
                     {draftedExercises.map((exercise) => {
                         const firstSet = exercise.sets[0];
                         const summaryText = `${exercise.sets.length} sets • ${firstSet.repetitions} reps • ${firstSet.weightKg} kg`;

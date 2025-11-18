@@ -16,7 +16,6 @@ export type WorkoutDraftExercise = {
     sets: PlannedSetEntry[]; 
 
 };
-
 // actions
 type WorkoutDraftState = {
     workoutName: string;
@@ -25,14 +24,11 @@ type WorkoutDraftState = {
     setWorkoutName: (name: string) => void;
     // adds a new exercise structure to the draft.
     addExercise: (exercise: Omit<WorkoutDraftExercise, 'id'>) => void;
-    // removes an exercise by its unique draft ID.
+    //updates an existing exercise based on its ID
     removeExercise: (id: string) => void; 
     // clears the entire draft after a successful save.
     clearDraft: () => void; 
-    //provides a summary of the workout draft - weight lifted in total for motivation purposes
-    /*summary: () => {
-        totalVolumeKg: number; 
-    };*/
+    
 };
 
 export const useWorkoutDraft = create<WorkoutDraftState>((set, get) => ({
@@ -40,7 +36,6 @@ export const useWorkoutDraft = create<WorkoutDraftState>((set, get) => ({
     draftedExercises: [],
 
     setWorkoutName: (name: string) => set({ workoutName: name }),
-
     addExercise: (exercise: Omit<WorkoutDraftExercise, 'id'>) => 
         set((state) => ({
             draftedExercises: [...state.draftedExercises, { ...exercise, id: generateDraftId() }],
@@ -52,16 +47,4 @@ export const useWorkoutDraft = create<WorkoutDraftState>((set, get) => ({
         })),
         
     clearDraft: () => set({ workoutName: "New Session", draftedExercises: [] }),
-//TODO: re-add summary for stats - must alter db for that
-    /*summary: () => {
-        const totalVolumeKg = get().draftedExercises.reduce(
-            (acc, exercise) => 
-                acc + exercise.sets.reduce(
-                    (setAcc, set) => setAcc + (set.repetitions * set.weightKg), 
-                    0
-                ),
-            0
-        );
-        return { totalVolumeKg: Math.round(totalVolumeKg) };
-    },*/
 }));
