@@ -61,6 +61,15 @@ export const workoutRepo = {
         });
         return toWorkoutModel(row);
     },
+    async update(workoutId: string, data: Partial<Omit<Workout, '$id' | 'userId' | '$createdAt' | '$updatedAt'>>): Promise<Workout> {
+        const row = await tables.updateRow({
+            databaseId: DB_ID,
+            tableId: COL_WORKOUT,
+            rowId: workoutId,
+            data: data,
+        });
+        return toWorkoutModel(row);
+    },
 
     async list(userId: string): Promise<Workout[]> {
         const res = await tables.listRows({
@@ -109,7 +118,6 @@ export const workoutRepo = {
     },
 
     async createSet(data: Omit<WorkoutSet, '$id' | '$createdAt' | '$updatedAt'>): Promise<WorkoutSet> {
-        // error handling for createSet debugging, leave it for now
         try {
         const row = await tables.createRow({
             databaseId: DB_ID,
@@ -122,5 +130,81 @@ export const workoutRepo = {
              console.error("createSet failed with error:", error);
         throw error;
          }
+    },
+    async deleteExerciseById(exerciseId: string): Promise<void> {
+        await tables.deleteRow({
+            databaseId: DB_ID,
+            tableId: COL_WORKOUT_EXERCISE,
+            rowId: exerciseId,
+        });
+    },
+
+    async updateSet(setId: string, repetitions: number, weightKg: number): Promise<WorkoutSet> {
+        const row = await tables.updateRow({
+            databaseId: DB_ID,
+            tableId: COL_WORKOUT_SET,
+            rowId: setId,
+            data: { 
+                repetitions, 
+                weightKg: weightKg > 0 ? weightKg : null,
+            },
+        });
+        return toWorkoutSetModel(row);
+    },
+
+    async updateExercise(exerciseId: string, data: Partial<Omit<WorkoutExercise, '$id' | 'workoutId' | '$createdAt' | '$updatedAt'>>): Promise<WorkoutExercise> {
+        const row = await tables.updateRow({
+            databaseId: DB_ID,
+            tableId: COL_WORKOUT_EXERCISE,
+            rowId: exerciseId,
+            data: data,
+        });
+        return toWorkoutExerciseModel(row);
+    },
+    async finishWorkout(workoutId: string, durationMinutes: number): Promise<Workout> {
+    const row = await tables.updateRow({
+        databaseId: DB_ID,
+        tableId: COL_WORKOUT,
+        rowId: workoutId,
+        data: {
+            endedAt: new Date().toISOString(),
+            durationMinutes: durationMinutes,
+        },
+    });
+    return toWorkoutModel(row);
+},
+async getExercise(exerciseId: string): Promise<WorkoutExercise> {
+        const row = await tables.getRow({
+            databaseId: DB_ID,
+            tableId: COL_WORKOUT_EXERCISE,
+            rowId: exerciseId,
+        });
+        return toWorkoutExerciseModel(row);
+    },
+    async addSet(workoutExerciseId: string, setNumber: number, repetitions: number, weightKg: number): Promise<WorkoutSet> {
+        try {
+            const row = await tables.createRow({
+                databaseId: DB_ID,
+                tableId: COL_WORKOUT_SET,
+                rowId: ID.unique(),
+                data: { 
+                    workoutExerciseId, 
+                    setNumber, 
+                    repetitions, 
+                    weightKg: weightKg > 0 ? weightKg : null, 
+                },
+            });
+            return toWorkoutSetModel(row);
+        } catch (error) {
+            console.error("addSet failed with error:", error);
+            throw error;
+        }
+    },
+    async deleteSet(setId: string): Promise<void> {
+        await tables.deleteRow({
+            databaseId: DB_ID,
+            tableId: COL_WORKOUT_SET,
+            rowId: setId,
+        });
     },
 };

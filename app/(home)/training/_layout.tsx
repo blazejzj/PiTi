@@ -6,6 +6,8 @@ export default function TrainingStack() {
             <Stack.Screen name="index"/>
             <Stack.Screen name="addTrainingSession"/>
             <Stack.Screen name="addExercise"/>
+            <Stack.Screen name="activeWorkout"/>
+            <Stack.Screen name="editDraftExercise"/>
         </Stack>
     );
 }
