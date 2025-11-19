@@ -19,9 +19,21 @@ type FormInputs = {
     protein_target_g: string;
 };
 
+// helper needed for calculation of total calories from macros.
+const calculateMacroCalories = (
+    protein: string,
+    carbs: string,
+    fat: string
+) => {
+    const p = Number(protein) || 0;
+    const c = Number(carbs) || 0;
+    const f = Number(fat) || 0;
+    return p * 4 + c * 4 + f * 9;
+};
+
 export default function CreateProfileScreen() {
     const router = useRouter();
-    const { control, handleSubmit } = useForm<FormInputs>({
+    const { control, handleSubmit, watch } = useForm<FormInputs>({
         defaultValues: {
             age: "",
             sex: "",
@@ -176,6 +188,18 @@ export default function CreateProfileScreen() {
                         placeholder="Protein (g)"
                         keyboardType="numeric"
                     />
+
+                    <View className="mt-2 p-3 bg-neutral-100 rounded-2xl">
+                        <Text className="font-semibold text-neutral-600 text-center">
+                            Your macros = approximately{" "}
+                            {calculateMacroCalories(
+                                watch("protein_target_g") || "0",
+                                watch("carb_target_g") || "0",
+                                watch("fat_target_g") || "0"
+                            ).toFixed(0)}{" "}
+                            kcal
+                        </Text>
+                    </View>
 
                     <Button
                         title="Save profile"
