@@ -18,6 +18,8 @@ import { foodItemRepo } from "../repository/foodItemRepo";
 import { useMealDraft } from "../state/useMealDraft";
 import ScreenContainer from "../../auth/components/ScreenContainer";
 import Toast from "react-native-toast-message";
+import { openFoodFactsApi } from "../../../services/api/openFoodFactsApi";
+import { useState, useEffect } from "react";
 
 type CustomFoodInputs = {
     foodName: string;
@@ -34,7 +36,7 @@ export default function ManualFoodEntryScreen() {
     const draft = useMealDraft();
     const prefilledBarcode = params?.barcode ?? "";
 
-    const { control, handleSubmit, reset } = useForm<CustomFoodInputs>({
+    const { control, handleSubmit, reset, watch } = useForm<CustomFoodInputs>({
         defaultValues: {
             foodName: "",
             barcode: prefilledBarcode,
@@ -44,6 +46,63 @@ export default function ManualFoodEntryScreen() {
             fat: "",
         },
     });
+
+    const [isFetching, setIsFetching] = useState(false);
+
+    const handleFetchfromBarcode = async (barcode: string) => {
+        if (!barcode || barcode.trim() === "") {
+            Toast.show({
+                type: "error",
+                text1: "Enter a barcode first",
+            });
+            return;
+        }
+
+        setIsFetching(true);
+
+        try {
+            const product = await openFoodFactsApi.getProductByBarcode(barcode);
+
+            if (!product) {
+                Toast.show({
+                    type: "error",
+                    text1: "Product not found",
+                    text2: "Enter nutrition information manually.",
+                });
+                setIsFetching(false);
+                return;
+            }
+
+            reset({
+                foodName: product.name,
+                barcode: product.barcode,
+                kcal: product.kcalPer100g?.toString() ?? "",
+                carbs: product.carbsPer100g?.toString() ?? "",
+                protein: product.proteinPer100g?.toString() ?? "",
+                fat: product.fatPer100g?.toString() ?? "",
+            });
+
+            Toast.show({
+                type: "success",
+                text1: `Product found!`,
+                text2: `Nutrition information for ${product.name} added.`,
+            });
+        } catch (error) {
+            Toast.show({
+                type: "error",
+                text1: "Error fetching product",
+                text2: "Enter nutrition information manually.",
+            });
+        } finally {
+            setIsFetching(false);
+        }
+    };
+
+    useEffect(() => {
+        if (prefilledBarcode) {
+            handleFetchfromBarcode(prefilledBarcode);
+        }
+    }, [prefilledBarcode]);
 
     const onSubmit = async (data: CustomFoodInputs) => {
         try {
@@ -133,6 +192,34 @@ export default function ManualFoodEntryScreen() {
                                         keyboardType="numeric"
                                         disabled={!!prefilledBarcode}
                                     />
+
+                                    {!prefilledBarcode && (
+                                        <Button
+                                            title={
+                                                isFetching
+                                                    ? "Fetching..."
+                                                    : "Fetch from Barcode"
+                                            }
+                                            onPress={() =>
+                                                handleFetchfromBarcode(
+                                                    watch("barcode") || ""
+                                                )
+                                            }
+                                            variant="secondary"
+                                            disabled={isFetching}
+                                            className="mt-4 rounded-2xl"
+                                            textClassName="font-medium"
+                                        />
+                                    )}
+
+                                    {isFetching && (
+                                        <View className="p-3 bg-blue-50 rounded-lg">
+                                            <Text className="text-blue-700 text-sm text-center">
+                                                Fetching product information
+                                                from Open Food Facts...
+                                            </Text>
+                                        </View>
+                                    )}
                                 </View>
 
                                 <View className="bg-white border border-neutral-200 rounded-3xl shadow-sm p-5">
