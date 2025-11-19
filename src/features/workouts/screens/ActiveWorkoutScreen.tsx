@@ -1,10 +1,11 @@
 import { useLocalSearchParams, useRouter, useFocusEffect } from "expo-router";
 import { View, Text, ScrollView, Pressable, Alert, Platform } from "react-native";
-import { useEffect, useState, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { workoutRepo } from "../repository/workoutRepo";
 import type { Workout, WorkoutExercise, WorkoutSet } from "../models";
 import Button from '../../../components/Button'; 
+import Toast from "react-native-toast-message";
 
 type CompletionStatusMap = Record<string, boolean>; 
 
@@ -36,8 +37,13 @@ const ActiveWorkoutScreen = () => {
             setSetsByExercise(setsMap);
             setCompletedStatus(initialCompletionMap);
         } catch (error) {
-            console.error("Failed to load workout data:", error);
-            Alert.alert("Failed to load workout data");
+            Toast.show({
+                type: "error",
+                text1: "Error",
+                text2: "Failed to load workout data",
+                position: "bottom",
+                visibilityTime: 4000,
+            });
         }
     }, [workoutId]);
     
@@ -58,21 +64,29 @@ const ActiveWorkoutScreen = () => {
                             
                             const diffMs = endTime - startTime; 
                             const durationMinutes = Math.round(diffMs / (1000 * 60)); 
-                            console.log(`[DB Check] Attempting to finish workout ID: ${workoutId} with duration: ${durationMinutes} minutes`);
                             await workoutRepo.finishWorkout(workoutId, durationMinutes);
 
                             await loadData();
-                            console.log(`[DB Check] SUCCESSFULLY completed and updated workout ID: ${workoutId}`);
-                            Alert.alert(
-                                "Session Complete!", 
-                                `You finished your workout in ${durationMinutes} minutes.`
-                            );
+                            Toast.show({
+                                type: "success",
+                                text1: "Session Complete!",
+                                text2:`You finished your workout in ${durationMinutes} minutes.`,
+                                position: "bottom",
+                                visibilityTime: 4000,
+
+                            });
+                            
                             
                             setTimeout(() => router.back(), 1000); 
                             
                         } catch (error) {
-                            console.error("Failed to finish workout:", error);
-                            Alert.alert("Error", "Could not complete the workout session.");
+                            Toast.show({
+                                type: "error",
+                                text1: "Error",
+                                text2: "Could not complete the workout session.",
+                                position: "bottom",
+                                visibilityTime: 4000,
+                            })
                         }
                     }
                 }
@@ -90,7 +104,14 @@ const ActiveWorkoutScreen = () => {
     const handleMarkCompleted = (exerciseId: string) => {
         if (!!workout?.endedAt) return;
         setCompletedStatus(prev => ({ ...prev, [exerciseId]: true }));
-        Alert.alert("Completed!", "Exercise marked as finished. Great job!");
+        Toast.show({
+                                type: "success",
+                                text1: "Completed!",
+                                text2:"Exercise marked as finished. Great job!",
+                                position: "bottom",
+                                visibilityTime: 4000,
+
+                            });
     };
 
     const handleRemoveExercise = async (exercise: WorkoutExercise) => {
@@ -106,11 +127,22 @@ const ActiveWorkoutScreen = () => {
                     onPress: async () => {
                         try {
                             await workoutRepo.deleteExerciseById(exercise.$id);
-                            Alert.alert("Success", "Exercise removed.");
+                            Toast.show({
+                                type: "success",
+                                text1: "Success",
+                                text2: "Exercise removed.",
+                                position: "bottom",
+                                visibilityTime: 4000,
+                            })
                             loadData(); 
                         } catch (error) {
-                            console.error("Deletion error:", error);
-                            Alert.alert("Error", "Failed to remove exercise.");
+                            Toast.show({
+                                type: "error",
+                                text1: "Error",
+                                text2: "Failed to remove exercise.",
+                                position: "bottom",
+                                visibilityTime: 4000,
+                            })
                         }
                     },
                 },
@@ -128,7 +160,13 @@ const ActiveWorkoutScreen = () => {
 
     const handleLongPressExercise = (exercise: WorkoutExercise) => {
         if (!!workout?.endedAt) {
-            Alert.alert("View Only", "This session is complete and cannot be edited.");
+            Toast.show({
+                                type: "info",
+                                text1: "View Only",
+                                text2: "This session is complete and cannot be edited.",
+                                position: "bottom",
+                                visibilityTime: 4000,
+                            })
             return;
         }
             
@@ -171,7 +209,8 @@ const ActiveWorkoutScreen = () => {
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={{ paddingBottom: Platform.OS === 'ios' ? 40 : 20 }}
             >
-                
+                <View className="mt-4 p-4 border border-gray-200 rounded-xl bg-gray-50">
+
                 <Text className="text-2xl font-bold text-neutral-800 mb-2">{workout.name}</Text>
 
                 <View className="flex-row items-center mb-4">
@@ -275,11 +314,12 @@ const ActiveWorkoutScreen = () => {
                         title="Go Back to Dashboard"
                         onPress={() => router.back()}
                         className="mt-3 border border-gray-300 bg-white"
-                        textClassName="text-neutral-500"
+                        textClassName="text-black"
                     />
                 )}
                 
                 <View className="mb-10" />
+                </View>
             </ScrollView>
         </SafeAreaView>
     );

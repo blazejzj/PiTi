@@ -5,6 +5,8 @@ import Button from '../../../components/Button';
 import SetRow from '../components/SetRow';
 import {workoutRepo} from '../repository/workoutRepo'; 
 import { WorkoutExercise, WorkoutSet } from '../models';
+import Toast from "react-native-toast-message";
+
 
 type ExerciseData = {
     exercise: WorkoutExercise;
@@ -28,8 +30,13 @@ export default function EditLiveExerciseScreen() {
 
             setData({ exercise, sets });
         } catch (error) {
-            console.error("Failed to fetch exercise sets:", error);
-            Alert.alert("Error", "Could not load exercise details.");
+            Toast.show({
+                            type: "error",
+                            text1: "Error",
+                            text2: "Could not load exercise details.",
+                            position: "bottom",
+                            visibilityTime: 4000,
+                        });
             router.back();
         } finally {
             setIsLoading(false);
@@ -40,7 +47,13 @@ export default function EditLiveExerciseScreen() {
         if (exerciseId) {
             fetchSets(exerciseId);
         } else {
-            Alert.alert("Error", "Missing Exercise ID.");
+            Toast.show({
+                            type: "error",
+                            text1: "Error",
+                            text2: "Missing Exercise ID.",
+                            position: "bottom",
+                            visibilityTime: 4000,
+                        });
             router.back();
         }
     }, [exerciseId, fetchSets, router]);
@@ -49,11 +62,22 @@ export default function EditLiveExerciseScreen() {
     const handleUpdateSet = async (set: WorkoutSet, reps: number, weight: number) => {
         try {
             await workoutRepo.updateSet(set.$id, reps, weight);
-            Alert.alert("Success", `Set ${set.setNumber} updated successfully.`);
+            Toast.show({
+                            type: "success",
+                            text1: "Success",
+                            text2: `Set ${set.setNumber} updated successfully.`,
+                            position: "top",
+                            visibilityTime: 4000,
+                        });
             await fetchSets(exerciseId!);
         } catch (error) {
-            console.error("Failed to update set:", error);
-            Alert.alert("Update Failed", "Could not save set changes to the database.");
+            Toast.show({
+                            type: "error",
+                            text1: "Update Failed",
+                            text2: "Could not save set changes to the database.",
+                            position: "top",
+                            visibilityTime: 4000,
+                        });
         }
     };
 
@@ -71,11 +95,22 @@ export default function EditLiveExerciseScreen() {
                     onPress: async () => {
                         try {
                             await workoutRepo.deleteSet(setId);
-                            Alert.alert("Success", `Set ${setNumber} removed.`);
+                            Toast.show({
+                            type: "success",
+                            text1: "Success",
+                            text2: `Set ${setNumber} removed.`,
+                            position: "top",
+                            visibilityTime: 4000,
+                        });
                             await fetchSets(exerciseId!); 
                         } catch (error) {
-                            console.error("Failed to delete set:", error);
-                            Alert.alert("Delete Failed", "Could not delete set from the database.");
+                            Toast.show({
+                            type: "error",
+                            text1: "Delete Failed",
+                            text2: "Could not delete set from the database.",
+                            position: "top",
+                            visibilityTime: 4000,
+                        });
                         }
                     },
                     style: "destructive"
@@ -96,11 +131,22 @@ export default function EditLiveExerciseScreen() {
         const defaultWeight = lastSet ? (lastSet.weightKg ?? 0) : 0;
         try {
             await workoutRepo.addSet(exerciseId, nextSetNumber, defaultReps, defaultWeight);
-            Alert.alert("Success", `Set ${nextSetNumber} added.`);
+            Toast.show({
+                            type: "success",
+                            text1: "Success",
+                            text2: `Set ${nextSetNumber} added.`,
+                            position: "top",
+                            visibilityTime: 4000,
+                        });
             await fetchSets(exerciseId);
         } catch (error) {
-            console.error("Failed to add set:", error);
-            Alert.alert("Add Set Failed", "Could not create a new set.");
+            Toast.show({
+                            type: "error",
+                            text1: "Add Set Failed",
+                            text2: "Could not create a new set.",
+                            position: "top",
+                            visibilityTime: 4000,
+                        });
         }
     };
 
@@ -124,7 +170,7 @@ export default function EditLiveExerciseScreen() {
 
 
     return (
-        <View className="flex-1 bg-white">
+        <View className="mt-20 p-4 border border-gray-200 rounded-xl bg-gray-50">
             <View className="p-5 border-b border-gray-200">
                 <Text className="text-2xl font-extrabold text-neutral-800">{data.exercise.exerciseName}</Text>
                 <Text className="text-md text-gray-500 mt-1">Editing Active Session Sets</Text>

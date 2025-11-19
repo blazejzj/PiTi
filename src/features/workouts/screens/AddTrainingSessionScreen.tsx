@@ -6,6 +6,9 @@ import FormInput from '../../../components/FormInput';
 import { workoutRepo } from '../repository/workoutRepo';
 import { useEffect, useState } from 'react';
 import { useWorkoutDraft } from '../state/useWorkoutDraft';
+import { getCurrentUserSafely } from '../../../services/appwrite/authGuard';
+import Toast from "react-native-toast-message";
+
 
 type AddWorkoutForm = {
     workoutName: string;
@@ -15,12 +18,8 @@ type AddWorkoutForm = {
 
 export default function AddTrainingSessionScreen() {
     const router = useRouter();
-    //TODO: Get workoutId from params if editing existing session - leave it for now im thinking...
-    //const { workoutId } = useLocalSearchParams<{ workoutId?: string }>();
 
     const { draftedExercises, clearDraft, removeExercise, workoutName: draftName, setWorkoutName } = useWorkoutDraft();
-    const DUMMY_USER_ID = "user_abc123"; 
-    //const { totalVolumeKg } = summary();
     
     const { watch, setValue, control, handleSubmit } = useForm<AddWorkoutForm>({
     defaultValues: {
@@ -31,13 +30,25 @@ export default function AddTrainingSessionScreen() {
 });
 
     const handleSaveSession = async (data: AddWorkoutForm) => {
+
+        const user = await getCurrentUserSafely();
+        const userId = user?.$id;
+    if (typeof userId !== 'string' || userId.length === 0) {
+        Toast.show({
+                                        type: "error",
+                                        text1: "Authentication Error",
+                                        text2: "Cannot save session. Please log in.",
+                                    })
+        return;
+    }
+
         if (draftedExercises.length === 0) {
             Alert.alert("Please add at least one exercise before saving the session.");
             return;
         }
         try {
             const workoutData = {
-                userId: DUMMY_USER_ID,
+                userId: userId,
                 name: data.workoutName,
                 startedAt: new Date().toISOString(),
                 endedAt: null,
@@ -46,8 +57,10 @@ export default function AddTrainingSessionScreen() {
                 caloriesBurned: null,
             };
 
-            const createdWorkout = await workoutRepo.create(DUMMY_USER_ID, workoutData);
+            const createdWorkout = await workoutRepo.create(userId, workoutData);
             const workoutId = createdWorkout.$id; 
+
+
             for (const draftExercise of draftedExercises) {
                 
                 const exerciseData = {
@@ -68,13 +81,24 @@ export default function AddTrainingSessionScreen() {
                 }
             }
 
-            clearDraft(); 
-            Alert.alert("Workout saved successfully!");
+            clearDraft();
+            Toast.show({
+                                            type: "success",
+                                            text1: "Workout saved successfully!",
+                                            position: "top",
+                                            visibilityTime: 4000,
+            
+                                        }); 
             router.back(); 
 
         } catch (error) {
-            console.error("Error saving workout:", error);
-            Alert.alert("Failed to save workout. Check console for details.");
+            Toast.show({
+                            type: "error",
+                            text1: "Error",
+                            text2: "Failed to save workout.",
+                            position: "top",
+                            visibilityTime: 4000,
+                        });
         }
     };
 
@@ -167,27 +191,7 @@ export default function AddTrainingSessionScreen() {
                     textClassName="text-lg font-bold text-white" 
                 />
 
-                <Text className="text-center text-sm text-neutral-500 font-medium my-4">— OR —</Text>
-                {/* TODO: Predefined Programs implementation */}
-                <View className="p-4 border border-gray-200 rounded-xl bg-gray-50">
-                    <Text className="text-xl font-bold mb-3 text-neutral-800">Add Predefined Programs</Text>
-                    
-                    <View className="mb-4">
-                        <Text className="text-lg font-semibold text-neutral-800">Full Body</Text>
-                        <Text className="text-sm text-neutral-600">Cardio • 3x/week</Text>
-                        <Pressable className="mt-2 py-2 bg-green-500 rounded-lg items-center w-24">
-                            <Text className="text-sm font-bold text-white">Use Program</Text>
-                        </Pressable>
-                    </View>
-                    
-                    <View>
-                        <Text className="text-lg font-semibold text-neutral-800">Core</Text>
-                        <Text className="text-sm text-neutral-600">Strength • 3x/week</Text>
-                        <Pressable className="mt-2 py-2 bg-green-500 rounded-lg items-center w-24">
-                            <Text className="text-sm font-bold text-white">Use Program</Text>
-                        </Pressable>
-                    </View>
-                </View>
+                
 
             </ScrollView>
         </View>

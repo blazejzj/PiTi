@@ -6,9 +6,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { workoutRepo } from "../repository/workoutRepo";
 import { Workout } from "../models";
 import { DailyStatsHeader } from "../components/DailyStatsHeader";
-
-
-const DUMMY_USER_ID = "user_abc123"; 
+import { getCurrentUserSafely } from "../../../services/appwrite/authGuard";
+import Toast from "react-native-toast-message";
 
 export default function TrainingScreen() {
     const router = useRouter();
@@ -16,19 +15,33 @@ export default function TrainingScreen() {
     const [isLoading, setIsLoading] = useState(true);
     
     const handleFetchWorkouts = useCallback(async () => {
-        if (!DUMMY_USER_ID) return;
+    setIsLoading(true);
+    try {
+        const user = await getCurrentUserSafely();
+        const userId = user?.$id; 
         
-        setIsLoading(true);
-        try {
-            const fetchedWorkouts = await workoutRepo.list(DUMMY_USER_ID);
-            fetchedWorkouts.sort((a, b) => new Date(b.startedAt).getTime() - new Date(a.startedAt).getTime());
-            setWorkouts(fetchedWorkouts);
-        } catch (error) {
-            console.error("Failed to fetch workouts:", error);
-        } finally {
-            setIsLoading(false);
+        if (!userId) {
+            Toast.show({
+                            type: "error",
+                            text1: "Error",
+                            text2: "User ID not found, cannot fetch workouts.",
+                        });
+            return;
         }
-    }, []);
+
+        const fetchedWorkouts = await workoutRepo.list(userId); 
+    
+        setWorkouts(fetchedWorkouts);
+    } catch (error) {
+        Toast.show({
+                            type: "error",
+                            text1: "Error",
+                            text2: "Failed during workout fetch",
+                        });
+    } finally {
+        setIsLoading(false);
+    }
+}, []);
 
     useFocusEffect(
         useCallback(() => {
@@ -48,10 +61,19 @@ export default function TrainingScreen() {
                 onPress: async () => {
                     try {
                         await workoutRepo.deleteById(workoutId);
+                        Toast.show({
+                            type: "success",
+                            text1:  `Session ${workoutName} deleted.`,
+                            position: "top",
+                            visibilityTime: 4000,
+                        });
                         handleFetchWorkouts();
                     } catch (error) {
-                        console.error("Failed to delete workout:", error);
-                        Alert.alert("Error", "Could not delete workout session.");
+                        Toast.show({
+                            type: "error",
+                            text1: "Error",
+                            text2: "Could not delete workout session.",
+                        });
                     }
                 }
             }
@@ -121,8 +143,8 @@ export default function TrainingScreen() {
                     averageTimeMinutes={averageTimeMinutes}
                 />
                 
-                <View className="mb-6">
-                    <Text className="text-xl font-bold text-neutral-800 mb-3">Active Sessions</Text>
+                <View className="mt-4 p-4 border border-gray-200 rounded-xl bg-gray-50">
+                    <Text className="text-xl font-bold text-neutral-800 mb-5">Active Sessions</Text>
 
                     {activeWorkouts.length > 0 ? (
                         activeWorkouts.map((session, index) => (
@@ -186,9 +208,6 @@ export default function TrainingScreen() {
                         <Text className="text-base text-neutral-500">No finished sessions recorded yet.</Text>
                     )}
 
-                    <Pressable className="mt-3 py-2 items-center">
-                        <Text className="text-sm font-semibold text-black">See all history</Text>
-                    </Pressable>
                 </View>
 
                 <View className="mt-6" />

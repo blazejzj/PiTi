@@ -61,6 +61,15 @@ export const workoutRepo = {
         });
         return toWorkoutModel(row);
     },
+    async update(workoutId: string, data: Partial<Omit<Workout, '$id' | 'userId' | '$createdAt' | '$updatedAt'>>): Promise<Workout> {
+        const row = await tables.updateRow({
+            databaseId: DB_ID,
+            tableId: COL_WORKOUT,
+            rowId: workoutId,
+            data: data,
+        });
+        return toWorkoutModel(row);
+    },
 
     async list(userId: string): Promise<Workout[]> {
         const res = await tables.listRows({
