@@ -4,17 +4,7 @@ import {
     DB_ID,
     COL_FOOD_ITEM,
 } from "../../../services/appwrite/appwrite";
-import type { FoodItem } from "../models";
-
-export type CreateFoodItemInput = {
-    userId: string;
-    name: string;
-    barcode?: string;
-    kcalPer100g: number;
-    carbPer100g: number;
-    fatPer100g: number;
-    proteinPer100g: number;
-};
+import type { CreateFoodItemInput, FoodItem } from "../models";
 
 // helper which maps Appwrite row to FoodItem model
 const toModel = (row: any): FoodItem => ({
@@ -92,5 +82,16 @@ export const foodItemRepo = {
         });
         // map to model and return if exists
         return res.rows[0] ? toModel(res.rows[0]) : null;
+    },
+
+    // list food items by ids
+    async listByIds(ids: string[]): Promise<FoodItem[]> {
+        if (ids.length === 0) return [];
+        const res = await tables.listRows({
+            databaseId: DB_ID,
+            tableId: COL_FOOD_ITEM,
+            queries: [Query.equal("$id", ids), Query.limit(ids.length)],
+        });
+        return res.rows.map(toModel);
     },
 };

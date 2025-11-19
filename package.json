@@ -20,6 +20,7 @@
         "@expo/metro-config": "~54.0.2",
         "@expo/vector-icons": "^15.0.3",
         "@hookform/resolvers": "5.2.2",
+        "@react-native-community/datetimepicker": "8.4.4",
         "appwrite": "20.1.0",
         "expo": "54.0.13",
         "expo-camera": "~17.0.8",

@@ -5,6 +5,7 @@ export type UserProfile = {
     weight_kg?: number | null;
     age?: number | null;
     sex?: "male" | "female" | "other" | null;
+    target_weight_kg?: number | null;
     daily_kcal_target?: number | null;
     carb_target_g?: number | null;
     fat_target_g?: number | null;

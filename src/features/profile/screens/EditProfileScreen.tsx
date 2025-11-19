@@ -1,11 +1,12 @@
-import { useRouter } from "expo-router";
 import { View, Text, Pressable, ScrollView } from "react-native";
+import { useRouter } from "expo-router";
 import { useForm } from "react-hook-form";
-import Toast from "react-native-toast-message";
-import Button from "../../../components/Button";
-import FormInput from "../../auth/components/FormInput";
 import { useProfile } from "../hooks/useProfile";
 import { upsertUserProfile } from "../api/profileRepo";
+import FormInput from "../../auth/components/FormInput";
+import Button from "../../../components/Button";
+import Toast from "react-native-toast-message";
+import { useEffect } from "react";
 
 type FormInputs = {
     age: string;
@@ -31,9 +32,10 @@ const calculateMacroCalories = (
     return p * 4 + c * 4 + f * 9;
 };
 
-export default function CreateProfileScreen() {
+export default function EditProfileScreen() {
     const router = useRouter();
-    const { control, handleSubmit, watch } = useForm<FormInputs>({
+    const { profile, userId, refresh } = useProfile();
+    const { control, handleSubmit, reset, watch } = useForm<FormInputs>({
         defaultValues: {
             age: "",
             sex: "",
@@ -47,7 +49,21 @@ export default function CreateProfileScreen() {
         },
     });
 
-    const { userId } = useProfile();
+    useEffect(() => {
+        if (profile) {
+            reset({
+                age: profile.age?.toString() ?? "",
+                sex: profile.sex ?? "",
+                height_cm: profile.height_cm?.toString() ?? "",
+                weight_kg: profile.weight_kg?.toString() ?? "",
+                target_weight_kg: profile.target_weight_kg?.toString() ?? "",
+                daily_kcal_target: profile.daily_kcal_target?.toString() ?? "",
+                carb_target_g: profile.carb_target_g?.toString() ?? "",
+                fat_target_g: profile.fat_target_g?.toString() ?? "",
+                protein_target_g: profile.protein_target_g?.toString() ?? "",
+            });
+        }
+    }, [profile, reset]);
 
     const onSubmit = async (data: FormInputs) => {
         if (!userId) {
@@ -59,9 +75,6 @@ export default function CreateProfileScreen() {
             return;
         }
 
-        {
-            /* for now the sex is just a string, but perhaps drop down picker later?.. */
-        }
         try {
             const payload = {
                 age: Number(data.age),
@@ -71,7 +84,7 @@ export default function CreateProfileScreen() {
                     | "other",
                 height_cm: Number(data.height_cm),
                 weight_kg: Number(data.weight_kg),
-                target_weight_kg: Number(data.target_weight_kg),
+                target_weight_kg: Number(data.target_weight_kg), // TODO: Test after added new field to DB!!
                 daily_kcal_target: Number(data.daily_kcal_target),
                 carb_target_g: Number(data.carb_target_g),
                 fat_target_g: Number(data.fat_target_g),
@@ -80,24 +93,25 @@ export default function CreateProfileScreen() {
             await upsertUserProfile(userId, payload);
             Toast.show({
                 type: "success",
-                text1: "Profile saved",
+                text1: "Profile updated",
             });
-            router.replace("/(home)/profile");
+            await refresh();
+            router.back();
         } catch (err) {
-            console.log("Error creating profile", err);
+            console.log("Error updating profile", err);
             Toast.show({
                 type: "error",
-                text1: "Error creating profile",
+                text1: "Error updating profile",
                 text2: "Please try again later",
             });
         }
     };
 
     const handleGoBack = () => router.back();
-    const handleCreateProfile = () => handleSubmit(onSubmit)();
+    const handleSaveChanges = () => handleSubmit(onSubmit)();
 
     return (
-        <View className="flex-1 bg-white p-safe pt-10">
+        <View className="flex-1 bg-white" style={{ paddingTop: 50 }}>
             <Pressable
                 onPress={handleGoBack}
                 className="top-12 left-4 p-2 z-10 self-start"
@@ -105,17 +119,16 @@ export default function CreateProfileScreen() {
                 <Text className="font-semibold">Back</Text>
             </Pressable>
 
-            {/* ScrollVieww instad of Flatlist here - same as in profile screen - very limited items to render. */}
             <ScrollView
                 contentContainerStyle={{ padding: 24, paddingBottom: 80 }}
                 showsVerticalScrollIndicator={false}
             >
                 <View className="mb-6">
                     <Text className="font-bold text-3xl text-center">
-                        Setup your profile
+                        Edit your profile
                     </Text>
                     <Text className="text-lg text-center text-neutral-600 mt-2">
-                        Add your personal details below
+                        Update your personal details below
                     </Text>
                 </View>
 
@@ -160,6 +173,7 @@ export default function CreateProfileScreen() {
                         placeholder="Target Weight (kg)"
                         keyboardType="numeric"
                     />
+
                     <FormInput
                         control={control}
                         name="daily_kcal_target"
@@ -202,8 +216,8 @@ export default function CreateProfileScreen() {
                     </View>
 
                     <Button
-                        title="Save profile"
-                        onPress={handleCreateProfile}
+                        title="Save Changes"
+                        onPress={handleSaveChanges}
                         variant="primary"
                         className="mt-6"
                     />
