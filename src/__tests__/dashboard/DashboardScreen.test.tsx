@@ -16,6 +16,7 @@ describe("DashboardScreen", () => {
         protein_target_g: 150,
         fat_target_g: 70,
         carb_target_g: 300,
+        target_weight_kg: 70,
         age: 30,
         sex: "male",
         height_cm: 180,

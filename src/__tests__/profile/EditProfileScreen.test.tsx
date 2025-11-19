@@ -26,6 +26,7 @@ const mockProfile: UserProfile = {
     weight_kg: 75,
     age: 30,
     sex: "male",
+    target_weight_kg: 70,
     daily_kcal_target: 2800,
     carb_target_g: 350,
     fat_target_g: 70,
@@ -62,16 +63,19 @@ describe("EditProfileScreen", () => {
 
     // Test 1: Renders correctly with correct title and pre-filled data
     it("renders correctly with correct title and pre-filled data", () => {
-        const { getByText, getByDisplayValue } = render(<EditProfileScreen />);
+        const { getByText, getByDisplayValue, getAllByDisplayValue } = render(
+            <EditProfileScreen />
+        );
 
         expect(getByText("Edit your profile")).toBeTruthy();
         expect(getByDisplayValue("30")).toBeTruthy();
         expect(getByDisplayValue("male")).toBeTruthy();
         expect(getByDisplayValue("180")).toBeTruthy();
         expect(getByDisplayValue("75")).toBeTruthy();
+        expect(getAllByDisplayValue("70")).toBeTruthy();
         expect(getByDisplayValue("2800")).toBeTruthy();
         expect(getByDisplayValue("350")).toBeTruthy();
-        expect(getByDisplayValue("70")).toBeTruthy();
+        expect(getAllByDisplayValue("70")).toBeTruthy();
         expect(getByDisplayValue("150")).toBeTruthy();
     });
 
@@ -105,6 +109,7 @@ describe("EditProfileScreen", () => {
                 sex: "male",
                 height_cm: 180,
                 weight_kg: 75,
+                target_weight_kg: 70,
                 daily_kcal_target: 2800,
                 carb_target_g: 350,
                 fat_target_g: 70,

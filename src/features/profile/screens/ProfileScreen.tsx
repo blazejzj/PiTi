@@ -77,10 +77,8 @@ export default function ProfileScreen() {
                         <View className="rounded-2xl py-3 items-center bg-neutral-200 mx-5">
                             <Text className="font-semibold">Weight Goal</Text>
                             <Text className="text-neutral-600">
-                                {profile.weight_kg
-                                    ? `${
-                                          profile.weight_kg - 5
-                                      } kg by 12.12.2025`
+                                {profile.target_weight_kg
+                                    ? `${profile.target_weight_kg} kg`
                                     : "No goal set"}
                             </Text>
                         </View>

@@ -12,6 +12,7 @@ type FormInputs = {
     sex: string;
     height_cm: string;
     weight_kg: string;
+    target_weight_kg: string;
     daily_kcal_target: string;
     carb_target_g: string;
     fat_target_g: string;
@@ -26,6 +27,7 @@ export default function CreateProfileScreen() {
             sex: "",
             height_cm: "",
             weight_kg: "",
+            target_weight_kg: "",
             daily_kcal_target: "",
             carb_target_g: "",
             fat_target_g: "",
@@ -57,6 +59,7 @@ export default function CreateProfileScreen() {
                     | "other",
                 height_cm: Number(data.height_cm),
                 weight_kg: Number(data.weight_kg),
+                target_weight_kg: Number(data.target_weight_kg),
                 daily_kcal_target: Number(data.daily_kcal_target),
                 carb_target_g: Number(data.carb_target_g),
                 fat_target_g: Number(data.fat_target_g),
@@ -136,6 +139,14 @@ export default function CreateProfileScreen() {
                         placeholder="Weight (kg)"
                         keyboardType="numeric"
                         rules={{ required: "Please enter your weight" }}
+                    />
+
+                    <FormInput
+                        control={control}
+                        name="target_weight_kg"
+                        label="Target Weight (kg)"
+                        placeholder="Target Weight (kg)"
+                        keyboardType="numeric"
                     />
                     <FormInput
                         control={control}
