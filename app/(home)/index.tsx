@@ -11,7 +11,7 @@ import DashboardScreen from "../../src/features/dashboard/screens/DashboardScree
 // Views stay dumb and pretty for now
 export default function DashboardContainer() {
     const router = useRouter();
-    const { loading, profile, error } = useProfile();
+    const { loading, profile, error, userId } = useProfile();
 
     const handleLogout = async () => {
         await account.deleteSession({ sessionId: "current" });
@@ -44,5 +44,11 @@ export default function DashboardContainer() {
         return <EmptyProfileScreen onCreateProfile={handleCreateProfile} />;
     }
 
-    return <DashboardScreen profile={profile} onLogout={handleLogout} />;
+    return (
+        <DashboardScreen
+            profile={profile}
+            userId={userId}
+            onLogout={handleLogout}
+        />
+    );
 }

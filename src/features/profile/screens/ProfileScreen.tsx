@@ -2,15 +2,32 @@ import { router } from "expo-router";
 import { useRouter } from "expo-router";
 import { useProfile } from "../hooks/useProfile";
 import { Text, View, Pressable, ScrollView } from "react-native";
-import { ActivityIndicator } from "react-native";
+import { useState, useEffect } from "react";
 import Button from "../../../components/Button";
 import { SectionCard } from "../components/SectionCard";
 import InfoItem from "../components/InfoItem";
+import { account } from "../../../services/appwrite/appwrite";
 
 export default function ProfileScreen() {
     const router = useRouter();
     const { loading, profile, error } = useProfile();
-    const userName = "Ola Nordmann"; // just for now,..TODO: fetch dynamic name!
+    //const userName = "Ola Nordmann";
+    const [userName, setUserName] = useState<string>("user");
+
+    // confused with tables - and name fetching, No field for user name? . Fethcin user name from email, workaround. Better than hardcoded name.
+    useEffect(() => {
+        const fetchUserName = async () => {
+            try {
+                const currentUser = await account.get();
+                const name = currentUser.email.split("@")[0];
+                setUserName(name);
+            } catch (error) {
+                console.error("Error fetching user name:", error);
+            }
+        };
+
+        fetchUserName();
+    }, []);
 
     if (!profile) return null; // otherwise profile might possibly be null...
 
@@ -29,104 +46,102 @@ export default function ProfileScreen() {
         <ScrollView
             className="flex-1 bg-white p-safe"
             showsVerticalScrollIndicator={false}
-            contentContainerStyle={{ paddingBottom: 50 }}
+            contentContainerStyle={{ paddingBottom: 50, paddingTop: 50 }}
         >
             <View className="bg-white">
                 {/* Heeader section here. Cant fetch dynamic user name?? Ask later. */}
                 <View className="items-center py-8 bg-white">
                     <View className="w-20 h-20 rounded-full bg-neutral-200 mb-4" />
                     <Text className="text-xl font-semibold mb-1">
-                        Ola Nordmann
+                        {userName}
                     </Text>
                 </View>
 
                 {/* Stats bar here-  TODO: dynamic nymber of sessions gotta fix that*/}
                 <View className="flex-row justify-around border-t border-b border-neutral-400 py-4 bg-white">
                     <InfoItem
-                        label="Vekt"
+                        label="Weight"
                         value={`${profile.weight_kg ?? "N/a"} kg`}
                         className=""
                     />
                     <InfoItem
-                        label="Kalorimål"
+                        label="Calorie Goal"
                         value={`${profile.daily_kcal_target ?? "N/A"}`}
                     />
-                    <InfoItem label="Økter" value="32" />
+                    <InfoItem label="Sessions" value="32" />
                 </View>
 
                 {/*Personlige mål section here,, TODO: gotta fix personal goals dynamic too. Easy - 5kg to illustrate now*/}
-                <SectionCard title="Personlige mål">
+                <SectionCard title="Personal Goals">
                     <View className="gap-3 border-b border-neutral-400 pb-5">
                         <View className="rounded-2xl py-3 items-center bg-neutral-200 mx-5">
-                            <Text className="font-semibold">Vektmål</Text>
+                            <Text className="font-semibold">Weight Goal</Text>
                             <Text className="text-neutral-600">
-                                {profile.weight_kg
-                                    ? `${
-                                          profile.weight_kg - 5
-                                      } kg innen 12.12.2025`
-                                    : "Ingen mål satt"}
+                                {profile.target_weight_kg
+                                    ? `${profile.target_weight_kg} kg`
+                                    : "No goal set"}
                             </Text>
                         </View>
 
                         <View className="rounded-2xl bg-neutral-200 py-3 px-5 items-center mx-5">
                             <Text className="font-semibold">Steps</Text>
                             <Text className="text-neutral-600">
-                                50k innen 12.12.2025
+                                50k by 12.12.2025
                             </Text>
                         </View>
                     </View>
                 </SectionCard>
 
                 {/* KroppsinfoSection here...Fixed BMI calculation too. */}
-                <SectionCard title="Kroppsinfo">
-                    <View className="flex-row justify-around px-5 ">
+                <SectionCard title="Body Info">
+                    <View className="flex-row px-8 gap-3">
                         <InfoItem
-                            label="Vekt"
+                            label="Weight"
                             value={`${profile.weight_kg ?? "N/A"} kg`}
-                            className="bg-neutral-200 rounded-3xl min-width-[500px]"
+                            className="bg-neutral-200 rounded-3xl flex-1"
                         />
                         <InfoItem
-                            label="Alder"
-                            value={`${profile.age ?? "N/A"} år`}
-                            className="bg-neutral-200 rounded-3xl min-width-[80px]"
+                            label="Age"
+                            value={`${profile.age ?? "N/A"} years`}
+                            className="bg-neutral-200 rounded-3xl flex-1"
                         />
                     </View>
-                    <View className="flex-row justify-around px-5 mt-4 border-b border-neutral-400 pb-6">
+                    <View className="flex-row px-8 mt-4 border-b border-neutral-400 pb-6 gap-3">
                         <InfoItem
                             label="BMI"
                             value={bmi}
-                            className="bg-neutral-200 rounded-3xl min-width-[200px]"
+                            className="bg-neutral-200 rounded-3xl flex-1"
                         />
                         <InfoItem
                             label="Stats"
                             value="N/A"
-                            className="bg-neutral-200 rounded-3xl min-width-[200px]"
+                            className="bg-neutral-200 rounded-3xl flex-1"
                         />
                     </View>
                 </SectionCard>
 
                 {/*Innstillinger section here*/}
 
-                <SectionCard title="Innstillinger">
+                <SectionCard title="Settings">
                     <View className="gap-3 px-6 ">
                         <Pressable className="rounded-2xl bg-neutral-100 py-3 px-5">
                             <Text className="font-semibold text-center">
-                                Påminnelser
+                                Reminders
                             </Text>
                         </Pressable>
                         <Pressable className="rounded-2xl bg-neutral-100 py-3 px-5">
                             <Text className="font-semibold text-center">
-                                Meldinger
+                                Messages
                             </Text>
                         </Pressable>
                         <Pressable className="rounded-2xl bg-neutral-100 py-3 px-5">
                             <Text className="font-semibold text-center">
-                                Eksporter data
+                                Export Data
                             </Text>
                         </Pressable>
                         <Pressable className="rounded-2xl bg-neutral-100 py-3 px-5">
                             <Text className="font-semibold text-center">
-                                Personvern
+                                Privacy
                             </Text>
                         </Pressable>
                     </View>
@@ -134,11 +149,11 @@ export default function ProfileScreen() {
 
                 {/* Edit/rediger profile..  */}
 
-                <View className="items-center mt-10">
+                <View className="items-center mt-10 pb-10">
                     <Button
-                        title="Rediger profil"
+                        title="Edit Profile"
                         variant="primary"
-                        onPress={() => router.push("/(home)/profile/setup")}
+                        onPress={() => router.push("/(home)/profile/edit")}
                         className="w-3/4 rounded-2xl py-4"
                     />
                 </View>
