@@ -39,13 +39,7 @@ describe("DashboardScreen", () => {
             error: null,
         });
 
-        render(
-            <DashboardScreen
-                profile={mockProfile}
-                userId="user-123"
-                onLogout={mockOnLogout}
-            />
-        );
+        render(<DashboardScreen profile={mockProfile} userId="user-123" />);
 
         expect(screen.getByText("Dashboard •")).toBeTruthy();
         expect(screen.getByText("Target: 2500 kcal")).toBeTruthy();
@@ -63,13 +57,7 @@ describe("DashboardScreen", () => {
             error: null,
         });
 
-        render(
-            <DashboardScreen
-                profile={mockProfile}
-                userId="user-123"
-                onLogout={mockOnLogout}
-            />
-        );
+        render(<DashboardScreen profile={mockProfile} userId="user-123" />);
 
         expect(screen.getByText("Remaining: 1300 kcal")).toBeTruthy();
     });
@@ -82,13 +70,7 @@ describe("DashboardScreen", () => {
             error: null,
         });
 
-        render(
-            <DashboardScreen
-                profile={mockProfile}
-                userId="user-123"
-                onLogout={mockOnLogout}
-            />
-        );
+        render(<DashboardScreen profile={mockProfile} userId="user-123" />);
 
         expect(screen.getByText("Remaining: 0 kcal")).toBeTruthy();
     });
@@ -109,40 +91,12 @@ describe("DashboardScreen", () => {
             error: null,
         });
 
-        render(
-            <DashboardScreen
-                profile={emptyProfile}
-                userId="user-123"
-                onLogout={mockOnLogout}
-            />
-        );
+        render(<DashboardScreen profile={emptyProfile} userId="user-123" />);
 
         expect(screen.getByText("Target: N/A kcal")).toBeTruthy();
         expect(screen.getByText("Remaining: — kcal")).toBeTruthy();
         expect(screen.getByText("Protein: 100.0g / —g")).toBeTruthy();
         expect(screen.getByText("Fat: 50.0g / — g")).toBeTruthy();
         expect(screen.getByText("Carbs: 180.0g / — g")).toBeTruthy();
-    });
-
-    // test 5: onLogout is called when logout button is pressed.
-    it("calls onLogout when logout button is pressed", () => {
-        (useDailyNutrition as jest.Mock).mockReturnValue({
-            totals: { kcal: 1800, proteinG: 120, fatG: 60, carbG: 200 },
-            loading: false,
-            error: null,
-        });
-
-        render(
-            <DashboardScreen
-                profile={mockProfile}
-                userId="user-123"
-                onLogout={mockOnLogout}
-            />
-        );
-
-        const logoutButton = screen.getByText("Log out");
-        fireEvent.press(logoutButton);
-
-        expect(mockOnLogout).toHaveBeenCalledTimes(1);
     });
 });
