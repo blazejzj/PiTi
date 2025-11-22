@@ -8,6 +8,7 @@ type FormInputProps = {
     label: string;
     rules?: object;
     placeholder?: string;
+    disabled?: boolean;
 } & Pick<
     TextInputProps,
     "keyboardType" | "autoCapitalize" | "autoCorrect" | "secureTextEntry"
@@ -23,6 +24,7 @@ export default function FormInput({
     autoCapitalize,
     autoCorrect,
     secureTextEntry,
+    disabled,
 }: FormInputProps) {
     const [fieldFocused, setFieldFocused] = useState(false);
 
@@ -53,13 +55,14 @@ export default function FormInput({
                             autoCapitalize={autoCapitalize}
                             autoCorrect={autoCorrect}
                             secureTextEntry={secureTextEntry}
+                            editable={!disabled}
                             placeholderTextColor="#9CA3AF"
                             className={`p-5 rounded-2xl border bg-neutral-100 text-neutral-900 ${
                                 fieldFocused
                                     ? "border-[#41e36f]"
                                     : error
-                                      ? "border-red-400"
-                                      : "border-neutral-200"
+                                    ? "border-red-400"
+                                    : "border-neutral-200"
                             }`}
                         />
                         {error && (

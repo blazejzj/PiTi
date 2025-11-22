@@ -51,7 +51,8 @@ describe("CreateProfileScreen", () => {
         );
         fireEvent.changeText(screen.getByPlaceholderText("Height (cm)"), "180");
         fireEvent.changeText(screen.getByPlaceholderText("Weight (kg)"), "75");
-        fireEvent.changeText(screen.getByPlaceholderText("kcal"), "2500");
+        // denne linja fjernes, siden vi ikke lenger har/bruker et "kcal"-input:
+        // fireEvent.changeText(screen.getByPlaceholderText("kcal"), "2500");
         fireEvent.changeText(screen.getByPlaceholderText("Carbs (g)"), "300");
         fireEvent.changeText(screen.getByPlaceholderText("Fat (g)"), "70");
         fireEvent.changeText(screen.getByPlaceholderText("Protein (g)"), "150");
