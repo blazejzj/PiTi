@@ -1,3 +1,5 @@
+//må besteme om vi fjerner eller ikke
+
 /*import { View, Text, Pressable } from "react-native";
 
 type ActiveWorkoutCardProps = {
