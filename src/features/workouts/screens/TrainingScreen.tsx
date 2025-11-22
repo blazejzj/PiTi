@@ -1,52 +1,36 @@
 import { View, Text, ScrollView, Platform, Pressable, Alert} from "react-native";
 import Button from '../../../components/Button';
 import { useRouter, useFocusEffect} from "expo-router";
-import { useEffect, useState, useMemo, useCallback } from "react";
+import { useCallback } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { workoutRepo } from "../repository/workoutRepo";
-import { Workout } from "../models";
 import { DailyStatsHeader } from "../components/DailyStatsHeader";
-import { getCurrentUserSafely } from "../../../services/appwrite/authGuard";
 import Toast from "react-native-toast-message";
+
+import { useWeeklyWorkoutStats } from "../hooks/useWeeklyWorkoutStats"; 
 
 export default function TrainingScreen() {
     const router = useRouter();
-    const [workouts, setWorkouts] = useState<Workout[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
     
-    const handleFetchWorkouts = useCallback(async () => {
-    setIsLoading(true);
-    try {
-        const user = await getCurrentUserSafely();
-        const userId = user?.$id; 
+    const { 
+        workouts, 
+        currentDateString, 
+        sessionsThisWeek, 
+        averageTimeMinutes,
+        isLoading,
+        refetchWorkouts 
+    } = useWeeklyWorkoutStats(true); 
+
+    const activeWorkouts = workouts
+        .filter(w => !w.endedAt)
+        .sort((a, b) => new Date(b.startedAt).getTime() - new Date(a.startedAt).getTime());
         
-        if (!userId) {
-            Toast.show({
-                            type: "error",
-                            text1: "Error",
-                            text2: "User ID not found, cannot fetch workouts.",
-                        });
-            return;
-        }
-
-        const fetchedWorkouts = await workoutRepo.list(userId); 
+    const finishedWorkouts = workouts.filter(w => !!w.endedAt);
     
-        setWorkouts(fetchedWorkouts);
-    } catch (error) {
-        Toast.show({
-                            type: "error",
-                            text1: "Error",
-                            text2: "Failed during workout fetch",
-                        });
-    } finally {
-        setIsLoading(false);
-    }
-}, []);
-
     useFocusEffect(
         useCallback(() => {
-            handleFetchWorkouts();
-        }, [handleFetchWorkouts])
+            refetchWorkouts();
+        }, [refetchWorkouts])
     );
     
     const handleDeleteWorkout = (workoutId: string, workoutName: string) => {
@@ -63,11 +47,11 @@ export default function TrainingScreen() {
                         await workoutRepo.deleteById(workoutId);
                         Toast.show({
                             type: "success",
-                            text1:  `Session ${workoutName} deleted.`,
+                            text1: `Session ${workoutName} deleted.`,
                             position: "top",
                             visibilityTime: 4000,
                         });
-                        handleFetchWorkouts();
+                        refetchWorkouts(); 
                     } catch (error) {
                         Toast.show({
                             type: "error",
@@ -81,43 +65,6 @@ export default function TrainingScreen() {
     );
 };
     
-    const { 
-        currentDateString, 
-        sessionsThisWeek, 
-        averageTimeMinutes,
-        activeWorkouts, 
-        finishedWorkouts 
-    } = useMemo(() => {
-        const today = new Date();
-        const oneWeekAgo = today.getTime() - (7 * 24 * 60 * 60 * 1000);
-
-        const currentDateString = today.toLocaleDateString(undefined, {
-            weekday: 'long', year: 'numeric', month: 'short', day: 'numeric'
-        });
-
-        const finished = workouts.filter(w => !!w.endedAt);
-        const activeWorkouts = workouts.filter(w => !w.endedAt).sort((a, b) => new Date(b.startedAt).getTime() - new Date(a.startedAt).getTime());
-        
-        const sessionsThisWeek = workouts.filter(w => 
-            new Date(w.startedAt).getTime() >= oneWeekAgo
-        ).length;
-
-        const completedWorkouts = finished;
-        const totalTimeMinutes = completedWorkouts.reduce((sum, w) => sum + (w.durationMinutes || 0), 0);
-        
-        const averageTimeMinutes = completedWorkouts.length > 0
-            ? Math.round(totalTimeMinutes / completedWorkouts.length)
-            : 0;
-
-        return { 
-            currentDateString, 
-            sessionsThisWeek, 
-            averageTimeMinutes, 
-            activeWorkouts,
-            finishedWorkouts: finished 
-        };
-    }, [workouts]);
-
     const handleAddSession = () => {
         router.push('/training/addTrainingSession'); 
     };

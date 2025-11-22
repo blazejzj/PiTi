@@ -1,46 +1,52 @@
-import { View, Text, Pressable } from "react-native";
-import { WorkoutExerciseRow } from './WorkoutExerciseRow';
-import { ActiveWorkout } from "../../../types/training";
+/*import { View, Text, Pressable } from "react-native";
 
-
-type ActiveWorkoutCardProps = ActiveWorkout & {
+type ActiveWorkoutCardProps = {
+    name: string;
+    status: 'active' | 'paused' | 'finished'; 
+    durationDisplay: string; 
     onTogglePause: () => void;
+    isFinished: boolean;
 }
 
-export const ActiveWorkoutCard = ({name, status, duration, exercises, onTogglePause }: ActiveWorkoutCardProps) => {  
+
+export const ActiveWorkoutCard = ({name, status, durationDisplay, onTogglePause, isFinished }: ActiveWorkoutCardProps) => { 	
     
-    const actionText = status === 'active' ? 'Pause' : (status === 'paused' ? 'Resume' : 'Start session');
-    const actionClass = status === 'active' ? 'bg-gray-400' : 'bg-green-500';
+    if (isFinished) {
+        return (
+            <View className="p-5 bg-white border border-gray-200 rounded-xl shadow-sm mb-6">
+                <Text className="text-2xl font-bold text-neutral-800">{name}</Text>
+                <Text className="text-base text-gray-500 mt-2">
+                    Status: Completed (Total Duration: {durationDisplay})
+                </Text>
+            </View>
+        );
+    }
+    
+    const actionText = status === 'active' ? 'Pause' : 'Resume';
+    const actionClass = status === 'active' ? 'bg-orange-500' : 'bg-green-600';
+    const statusText = status === 'active' ? 'Active' : 'Paused';
 
     return (
-        <View className="p-6 bg-white border border-gray-200 rounded-xl mb-6 shadow-sm">
-            
-            <View className="flex-row justify-between items-center mb-5">
-                <Text className="text-xl font-bold text-neutral-800">{name}</Text>
+        <View className="p-5 bg-white border border-gray-200 rounded-xl shadow-md mb-6">
+            <View className="flex-row justify-between items-center mb-4">
+                <Text className="text-2xl font-bold text-neutral-800 flex-shrink mr-2">{name}</Text>
                 
                 <Pressable
                     onPress={onTogglePause}
-                    className={`px-4 py-2 rounded-lg ${actionClass}`}
+                    className={`px-4 py-2 rounded-lg shadow-sm ${actionClass}`}
                 >
                     <Text className="text-sm font-semibold text-white">{actionText}</Text>
                 </Pressable>
             </View>
             
-            <View className="flex-row justify-between mb-5 pb-2 border-b border-gray-200">
-                <Text className="text-sm font-medium text-neutral-500">
-                    {status === 'active' ? 'Ongoing Session' : (status === 'paused' ? 'Paused Session' : 'Not Started')}
+            <View className="flex-row justify-between pt-2 border-t border-gray-100">
+                <Text className={`text-sm font-medium ${status === 'active' ? 'text-green-700' : 'text-orange-700'}`}>
+                    Status: {statusText}
                 </Text>
-                <Text className="text-sm font-medium text-neutral-500">{duration}</Text>
+                <Text className="text-sm font-medium text-neutral-500">
+                    Duration: {durationDisplay}
+                </Text>
             </View>
-
-            <Text className="text-base font-semibold text-neutral-700 mb-2">Exercises:</Text>
-            {exercises.map((ex, index) => (
-                <WorkoutExerciseRow 
-                    key={index} 
-                    exercise={ex}
-                    onPress={() => console.log(`Navigating to ${ex.name} details...`)}
-                />
-            ))}
         </View>
     );
-};
+};*/
