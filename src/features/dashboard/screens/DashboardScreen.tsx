@@ -1,16 +1,15 @@
-import { View, Text, Pressable } from "react-native";
+import { View, Text } from "react-native";
 import type { UserProfile } from "../../profile/models";
 import { useDailyNutrition } from "../../nutrition/hooks/useDailyNutrition";
 
 type Props = {
     profile: UserProfile; // already loaded profile (not null)
     userId: string | null; // to be able to fetch nutrition data for dashboardscreen.
-    onLogout: () => void; // container handles actual logout
 };
 
 // now displays REAL totals based on added meals, using the latest logic from last PR on nutrition(18) and updated useDaulyNutrition hook.)
 
-export default function DashboardScreen({ profile, userId, onLogout }: Props) {
+export default function DashboardScreen({ profile, userId }: Props) {
     const { totals, loading, error } = useDailyNutrition(userId);
 
     const target = profile.daily_kcal_target ?? 0;
@@ -51,13 +50,6 @@ export default function DashboardScreen({ profile, userId, onLogout }: Props) {
                     {profile.carb_target_g ?? "—"} g
                 </Text>
             </View>
-
-            <Pressable
-                onPress={onLogout}
-                className="mt-8 px-6 py-3 rounded-xl self-start theme-bg-color"
-            >
-                <Text className="text-white font-semibold">Log out</Text>
-            </Pressable>
         </View>
     );
 }

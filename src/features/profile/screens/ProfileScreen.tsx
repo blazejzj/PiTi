@@ -8,6 +8,7 @@ import { SectionCard } from "../components/SectionCard";
 import InfoItem from "../components/InfoItem";
 import { account } from "../../../services/appwrite/appwrite";
 import { workoutRepo } from "../../workouts/repository/workoutRepo";
+import Toast from "react-native-toast-message";
 
 export default function ProfileScreen() {
     const router = useRouter();
@@ -46,6 +47,21 @@ export default function ProfileScreen() {
 
         fetchSessions();
     }, [profile?.user_id]);
+
+    const handleLogout = async () => {
+        try {
+            await account.deleteSession({ sessionId: "current" });
+            Toast.show({ type: "success", text1: "Logged out" });
+            router.replace("/(auth)/");
+        } catch (err) {
+            console.error("Error logging out:", err);
+            Toast.show({
+                type: "error",
+                text1: "Error logging out",
+                text2: "Please try again.",
+            });
+        }
+    };
 
     if (!profile) return null; // otherwise profile might possibly be null...
 
@@ -200,6 +216,14 @@ export default function ProfileScreen() {
                         title="Edit Profile"
                         variant="primary"
                         onPress={() => router.push("/(home)/profile/edit")}
+                        className="w-3/4 rounded-2xl py-4"
+                    />
+                </View>
+                <View>
+                    <Button
+                        title="Log out"
+                        variant="primary"
+                        onPress={handleLogout}
                         className="w-3/4 rounded-2xl py-4"
                     />
                 </View>

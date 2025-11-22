@@ -44,11 +44,5 @@ export default function DashboardContainer() {
         return <EmptyProfileScreen onCreateProfile={handleCreateProfile} />;
     }
 
-    return (
-        <DashboardScreen
-            profile={profile}
-            userId={userId}
-            onLogout={handleLogout}
-        />
-    );
+    return <DashboardScreen profile={profile} userId={userId} />;
 }
