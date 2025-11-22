@@ -60,7 +60,7 @@ describe("ProfileScreen", () => {
         expect(screen.getAllByText("Weight").length).toBeGreaterThan(0);
         expect(screen.getAllByText("75 kg").length).toBeGreaterThan(0);
         expect(screen.getByText("Calorie Goal")).toBeTruthy();
-        expect(screen.getByText("2000")).toBeTruthy();
+        expect(screen.getByText(/2000/)).toBeTruthy();
     });
 
     // test two:

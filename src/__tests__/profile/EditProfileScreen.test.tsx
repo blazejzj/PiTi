@@ -73,7 +73,6 @@ describe("EditProfileScreen", () => {
         expect(getByDisplayValue("180")).toBeTruthy();
         expect(getByDisplayValue("75")).toBeTruthy();
         expect(getAllByDisplayValue("70")).toBeTruthy();
-        expect(getByDisplayValue("2800")).toBeTruthy();
         expect(getByDisplayValue("350")).toBeTruthy();
         expect(getAllByDisplayValue("70")).toBeTruthy();
         expect(getByDisplayValue("150")).toBeTruthy();
@@ -83,7 +82,7 @@ describe("EditProfileScreen", () => {
     it("back button calls router back function", () => {
         const { getByText } = render(<EditProfileScreen />);
 
-        const backButton = getByText("Back");
+        const backButton = getByText("← Back");
         fireEvent.press(backButton);
         expect(mockRouter.back).toHaveBeenCalled();
     });

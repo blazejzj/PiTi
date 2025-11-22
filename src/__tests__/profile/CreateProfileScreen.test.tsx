@@ -142,7 +142,7 @@ describe("CreateProfileScreen", () => {
     //Back button test
     it("navigates back when back button is pressed", () => {
         render(<CreateProfileScreen />);
-        fireEvent.press(screen.getByText("Back"));
+        fireEvent.press(screen.getByText("← Back"));
         expect(mockRouter.back).toHaveBeenCalledTimes(1);
     });
 });
