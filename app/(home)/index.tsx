@@ -16,7 +16,7 @@ export default function DashboardContainer() {
     const handleLogout = async () => {
         await account.deleteSession({ sessionId: "current" });
         Toast.show({ type: "success", text1: "Logged out" });
-        router.replace("/(auth)/login");
+        router.replace("/(auth)/");
     };
 
     const handleCreateProfile = () => {
