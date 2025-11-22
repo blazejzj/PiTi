@@ -1,9 +1,5 @@
-import { View, Text } from "react-native";
+import StatsNotAddedScreen from "../../../src/features/stats/screens/StatsNotAddedScreen";
 
 export default function StatsIndex() {
-    return (
-        <View>
-            <Text>Stats tab</Text>
-        </View>
-    );
+    return <StatsNotAddedScreen />;
 }

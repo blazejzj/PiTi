@@ -5,7 +5,6 @@ import {
     View,
     ScrollView,
     Platform,
-    Alert,
     KeyboardAvoidingView,
     TouchableWithoutFeedback,
     Keyboard,
@@ -30,24 +29,51 @@ type CustomFoodInputs = {
     fat: string;
 };
 
+// TODO: Probably move to utils
+const parseNumber = (value: string) => {
+    if (!value) return 0;
+    const normalized = value.replace(",", ".").trim();
+    const n = Number(normalized);
+    return Number.isNaN(n) ? 0 : n;
+};
+
 export default function ManualFoodEntryScreen() {
     const router = useRouter();
     const params = useLocalSearchParams<{ barcode?: string }>();
     const draft = useMealDraft();
     const prefilledBarcode = params?.barcode ?? "";
 
-    const { control, handleSubmit, reset, watch } = useForm<CustomFoodInputs>({
-        defaultValues: {
-            foodName: "",
-            barcode: prefilledBarcode,
-            kcal: "",
-            carbs: "",
-            protein: "",
-            fat: "",
-        },
-    });
+    const { control, handleSubmit, reset, watch, setValue } =
+        useForm<CustomFoodInputs>({
+            defaultValues: {
+                foodName: "",
+                barcode: prefilledBarcode,
+                kcal: "",
+                carbs: "",
+                protein: "",
+                fat: "",
+            },
+        });
 
     const [isFetching, setIsFetching] = useState(false);
+
+    const proteinWatch = watch("protein");
+    const carbsWatch = watch("carbs");
+    const fatWatch = watch("fat");
+
+    useEffect(() => {
+        const p = parseNumber(proteinWatch);
+        const c = parseNumber(carbsWatch);
+        const f = parseNumber(fatWatch);
+
+        const kcalFromMacros = p * 4 + c * 4 + f * 9;
+
+        if (kcalFromMacros > 0) {
+            setValue("kcal", Math.round(kcalFromMacros).toString());
+        } else {
+            setValue("kcal", "");
+        }
+    }, [proteinWatch, carbsWatch, fatWatch, setValue]);
 
     const handleFetchfromBarcode = async (barcode: string) => {
         if (!barcode || barcode.trim() === "") {
@@ -111,10 +137,10 @@ export default function ManualFoodEntryScreen() {
                 userId: user.$id,
                 name: data.foodName.trim(),
                 barcode: data.barcode || "",
-                kcalPer100g: Number(data.kcal),
-                carbPer100g: Number(data.carbs),
-                proteinPer100g: Number(data.protein),
-                fatPer100g: Number(data.fat),
+                kcalPer100g: parseNumber(data.kcal),
+                carbPer100g: parseNumber(data.carbs),
+                proteinPer100g: parseNumber(data.protein),
+                fatPer100g: parseNumber(data.fat),
             });
             draft.addItem({
                 foodItemId: newFood.$id,
@@ -213,7 +239,7 @@ export default function ManualFoodEntryScreen() {
                                     )}
 
                                     {isFetching && (
-                                        <View className="p-3 bg-blue-50 rounded-lg">
+                                        <View className="p-3 bg-blue-50 rounded-lg mt-3">
                                             <Text className="text-blue-700 text-sm text-center">
                                                 Fetching product information
                                                 from Open Food Facts...
@@ -226,16 +252,24 @@ export default function ManualFoodEntryScreen() {
                                     <Text className="text-neutral-700 font-medium mb-3">
                                         Nutritional values (per 100g)
                                     </Text>
-                                    <View className="gap-3">
-                                        <FormInput
-                                            control={control}
-                                            name="kcal"
-                                            label="Calories (kcal)"
-                                            keyboardType="numeric"
-                                            rules={{
-                                                required: "Kcal is required",
-                                            }}
-                                        />
+                                    <View className="gap-4">
+                                        <View className="gap-1">
+                                            <FormInput
+                                                control={control}
+                                                name="kcal"
+                                                label="Calories (kcal)"
+                                                keyboardType="numeric"
+                                                disabled={true}
+                                                rules={{
+                                                    required:
+                                                        "Kcal is required",
+                                                }}
+                                            />
+                                            <Text className="text-xs text-neutral-400 ml-1">
+                                                Auto-calculated from protein,
+                                                carbs and fat
+                                            </Text>
+                                        </View>
                                         <FormInput
                                             control={control}
                                             name="protein"
