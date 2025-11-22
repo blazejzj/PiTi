@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from "react";
-import { Pressable, Text, View, ActivityIndicator, Alert } from "react-native";
+import { Pressable, Text, View, ActivityIndicator } from "react-native";
 import {
     CameraView,
     useCameraPermissions,
@@ -26,7 +26,6 @@ export default function ScanItemScreen() {
 
     // we use refs here to avoid rerenders, its unnecessary because
     // we dont need to show any visual feedback for these values
-    // unsure if this is the way here
     const scanningRef = useRef(false);
     const lastCodeRef = useRef<string | null>(null);
     const lastTimeRef = useRef<number>(0);
@@ -36,7 +35,6 @@ export default function ScanItemScreen() {
     }, [permission]);
 
     // useCallback here to avoid recreating the function on every render
-    // no need for that, the depds are stable
     const handleBarcodeScanned = useCallback(
         async (scan: BarcodeScanningResult) => {
             if (scanningRef.current) return;
@@ -59,15 +57,22 @@ export default function ScanItemScreen() {
                 // get curr user
                 const user = await account.get();
 
-                // se if user has this item
+                // see if user has this item saved already
                 const found = await foodItemRepo.getByBarcode(user.$id, code);
-                // if found just add it to the meal draft else go to manual entry with barcode prefilled for later
+
                 if (found) {
+                    const protein = found.proteinPer100g ?? 0;
+                    const carbs = found.carbPer100g ?? 0;
+                    const fat = found.fatPer100g ?? 0;
+                    const kcalFromMacros = protein * 4 + carbs * 4 + fat * 9;
+                    const kcalPer100g =
+                        found.kcalPer100g ?? Math.round(kcalFromMacros);
+
                     draft.addItem({
                         foodItemId: found.$id,
                         name: found.name,
                         amountG: 100,
-                        kcalPer100g: found.kcalPer100g ?? 0,
+                        kcalPer100g,
                         carbPer100g: found.carbPer100g ?? 0,
                         fatPer100g: found.fatPer100g ?? 0,
                         proteinPer100g: found.proteinPer100g ?? 0,
