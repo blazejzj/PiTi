@@ -16,7 +16,7 @@ export default function EmptyProfileScreen({ onCreateProfile }: Props) {
                 className="px-6 py-3 rounded-xl theme-bg-color"
             >
                 <Text className="text-white font-semibold text-lg">
-                    Create your profile
+                    Setup your profile
                 </Text>
             </Pressable>
         </View>

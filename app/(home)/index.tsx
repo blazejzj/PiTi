@@ -1,18 +1,24 @@
 import { View, ActivityIndicator } from "react-native";
-import { useRouter } from "expo-router";
+import { useRouter, useFocusEffect } from "expo-router";
 import Toast from "react-native-toast-message";
 import { account } from "../../src/services/appwrite/appwrite";
 import { useProfile } from "../../src/features/profile/hooks/useProfile";
 import ErrorView from "../../src/features/dashboard/screens/ErrorScreen";
 import EmptyProfileScreen from "../../src/features/dashboard/screens/EmptyProfileScreen";
 import DashboardScreen from "../../src/features/dashboard/screens/DashboardScreen";
+import { useCallback } from "react";
 
 // Container component -> fetch stuff and decide what to render.
 // Views stay dumb and pretty for now
 export default function DashboardContainer() {
     const router = useRouter();
-    const { loading, profile, error, userId } = useProfile();
+    const { loading, profile, error, userId,refresh } = useProfile();
 
+    useFocusEffect(
+        useCallback(() => {
+            refresh(); 
+        }, [refresh])
+    );
     const handleLogout = async () => {
         await account.deleteSession({ sessionId: "current" });
         Toast.show({ type: "success", text1: "Logged out" });
