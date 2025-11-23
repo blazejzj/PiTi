@@ -5,6 +5,8 @@ import { useState, useCallback } from "react";
 import type { UserProfile } from "../../profile/models";
 import { useDailyNutrition } from "../../nutrition/hooks/useDailyNutrition";
 import { CalorieRing } from "../components/CalorieRing";
+import Button from '../../../components/Button';
+
 
 type Props = {
     profile: UserProfile;
@@ -154,34 +156,28 @@ export default function DashboardScreen({ profile, userId }: Props) {
                         Quick actions
                     </Text>
 
-                    {/* TODO: Change this to our Button Compoenet probably */}
                     <View className="gap-2">
-                        <Pressable
+                        <Button
+                            title="Start a workout"
                             onPress={() => router.push("/training")}
-                            className="w-full rounded-2xl py-3 px-4 theme-bg-color"
-                        >
-                            <Text className="text-white font-semibold text-base text-center">
-                                Start a workout
-                            </Text>
-                        </Pressable>
-
-                        <Pressable
-                            onPress={() => router.push("/nutrition")}
+                            variant="primary"
+                            className="w-full rounded-2xl py-3 px-4" 
+                            textClassName="text-base text-center"
+                        />
+                        <Button
+                            title="Log a meal"
+                            onPress={() => router.push("/food")}
+                            variant="secondary"
                             className="w-full rounded-2xl py-3 px-4 bg-white border border-neutral-200"
-                        >
-                            <Text className="text-neutral-800 font-medium text-base text-center">
-                                Log a meal
-                            </Text>
-                        </Pressable>
-
-                        <Pressable
+                            textClassName="text-neutral-800 font-medium text-base text-center"
+                        />
+                        <Button
+                            title="View profile"
                             onPress={() => router.push("/(home)/profile")}
+                            variant="secondary"
                             className="w-full rounded-2xl py-3 px-4 bg-white border border-neutral-200"
-                        >
-                            <Text className="text-neutral-800 font-medium text-base text-center">
-                                View profile
-                            </Text>
-                        </Pressable>
+                            textClassName="text-neutral-800 font-medium text-base text-center"
+                        />
                     </View>
                 </View>
             </ScrollView>
