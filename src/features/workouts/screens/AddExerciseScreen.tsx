@@ -1,24 +1,32 @@
-import { View, Text, ScrollView, Platform, Alert } from 'react-native';
-import { useRouter } from 'expo-router';
+import {
+    View,
+    Text,
+    ScrollView,
+    Platform,
+    Alert,
+    KeyboardAvoidingView,
+    TouchableWithoutFeedback,
+    Keyboard,
+} from "react-native";
+import { useRouter } from "expo-router";
 import { useForm, Control } from "react-hook-form";
-import Button from '../../../components/Button';
-import FormInput from '../../../components/FormInput';
-import { useWorkoutDraft } from '../state/useWorkoutDraft';
+import Button from "../../../components/Button";
+import FormInput from "../../../components/FormInput";
+import { useWorkoutDraft } from "../state/useWorkoutDraft";
 
 type AddExerciseForm = {
     exerciseName: string;
     sets: string;
     reps: string;
     weight: string;
-}
+};
 
 export default function AddExerciseScreen() {
-    const router = useRouter();    
+    const router = useRouter();
     const { control, handleSubmit, reset } = useForm<AddExerciseForm>();
-    const { addExercise } = useWorkoutDraft(); 
+    const { addExercise } = useWorkoutDraft();
 
     const handleSaveExercise = (data: AddExerciseForm) => {
-        
         const numSets = Math.round(parseFloat(data.sets)) || 1;
         const defaultReps = Math.round(parseFloat(data.reps)) || 0;
         const defaultWeight = parseFloat(data.weight) || 0;
@@ -38,88 +46,114 @@ export default function AddExerciseScreen() {
             exerciseName: data.exerciseName,
             sets: plannedSets,
         };
-        
+
         addExercise(newDraftExercise);
-        reset(); 
+        reset();
         if (router.canGoBack()) router.back();
     };
 
-
     return (
-        <View className="flex-1 bg-white px-5">
-            <ScrollView 
-                className="flex-1 p-5"
-                showsVerticalScrollIndicator={false}
-                contentContainerStyle={{ paddingBottom: Platform.OS === 'ios' ? 40 : 20 }}
-                keyboardShouldPersistTaps="handled"
-            >
-                
-                <View className="mb-20" /> 
-                <Text className="text-xl font-bold text-neutral-800 mb-4 px-5">Manual Exercise Entry</Text>
+        <KeyboardAvoidingView
+            className="flex-1 bg-white"
+            behavior={Platform.OS === "ios" ? "padding" : undefined}
+            keyboardVerticalOffset={Platform.OS === "ios" ? 40 : 0}
+        >
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                <View className="flex-1 px-5">
+                    <ScrollView
+                        className="flex-1 p-5"
+                        showsVerticalScrollIndicator={false}
+                        contentContainerStyle={{
+                            paddingBottom: Platform.OS === "ios" ? 40 : 20,
+                        }}
+                        keyboardShouldPersistTaps="handled"
+                    >
+                        <View className="mb-20" />
+                        <Text className="text-xl font-bold text-neutral-800 mb-4 px-5">
+                            Manual Exercise Entry
+                        </Text>
 
-                <FormInput
-                    control={control as Control<AddExerciseForm>}
-                    name="exerciseName"
-                    label="Exercise Name"
-                    rules={{ required: 'Name is required' }}
-                    placeholder="e.g. Barbell Squat, Push-up"
-                />
+                        <FormInput
+                            control={control as Control<AddExerciseForm>}
+                            name="exerciseName"
+                            label="Exercise Name"
+                            rules={{ required: "Name is required" }}
+                            placeholder="e.g. Barbell Squat, Push-up"
+                        />
 
-                <View className="flex-row justify-between mb-4">
-                    <View className="w-1/3 pr-2">
-                        <FormInput
-                            control={control as Control<AddExerciseForm>}
-                            name="sets"
-                            label="Sets"
-                            placeholder="3"
-                            keyboardType="numeric"
-                            rules ={{ required: 'Sets is required',
-                                validate: (value: string) => parseInt(value, 10) > 0 || 'Sets must be bigger than 0'
-                             }}
+                        <View className="flex-row justify-between mb-4">
+                            <View className="w-1/3 pr-2">
+                                <FormInput
+                                    control={
+                                        control as Control<AddExerciseForm>
+                                    }
+                                    name="sets"
+                                    label="Sets"
+                                    placeholder="3"
+                                    keyboardType="numeric"
+                                    rules={{
+                                        required: "Sets is required",
+                                        validate: (value: string) =>
+                                            parseInt(value, 10) > 0 ||
+                                            "Sets must be bigger than 0",
+                                    }}
+                                />
+                            </View>
+                            <View className="w-1/3 px-1">
+                                <FormInput
+                                    control={
+                                        control as Control<AddExerciseForm>
+                                    }
+                                    name="reps"
+                                    label="Reps"
+                                    placeholder="10"
+                                    keyboardType="numeric"
+                                    rules={{
+                                        validate: (value: string) =>
+                                            parseInt(value, 10) > 0 ||
+                                            "Reps must be bigger than 0",
+                                    }}
+                                />
+                            </View>
+                            <View className="w-1/3 pl-2">
+                                <FormInput
+                                    control={
+                                        control as Control<AddExerciseForm>
+                                    }
+                                    name="weight"
+                                    label="Weight (kg)"
+                                    placeholder="80"
+                                    keyboardType="numeric"
+                                    rules={{
+                                        validate: (value: string) =>
+                                            parseInt(value, 10) >= 0 ||
+                                            "Weight must be bigger than 0",
+                                    }}
+                                />
+                            </View>
+                        </View>
+
+                        <View className="mb-10" />
+
+                        <Button
+                            title="Add Exercise to a workout session"
+                            variant="primary"
+                            onPress={handleSubmit(handleSaveExercise)}
+                            className="w-full rounded-xl"
+                            textClassName="text-lg font-bold text-white"
                         />
-                    </View>
-                    <View className="w-1/3 px-1">
-                        <FormInput
-                            control={control as Control<AddExerciseForm>}
-                            name="reps"
-                            label="Reps"
-                            placeholder="10"
-                            keyboardType="numeric"
-                            rules={{ validate: (value: string) => parseInt(value, 10) > 0 || 'Reps must be bigger than 0' }}
+                        <View className="mb-10" />
+                        <Button
+                            title="Cancel Entry"
+                            variant="secondary"
+                            onPress={() => router.back()}
+                            className="w-full rounded-xl py-4 border-2 border-green-500 bg-white"
+                            textClassName="text-md font-medium text-green-700"
                         />
-                    </View>
-                    <View className="w-1/3 pl-2">
-                        <FormInput
-                            control={control as Control<AddExerciseForm>}
-                            name="weight"
-                            label="Weight (kg)"
-                            placeholder="80"
-                            keyboardType="numeric"
-                            rules={{ validate: (value: string) => parseInt(value, 10) >= 0 || 'Weight must be bigger than 0' }}
-                        />
-                    </View>
+                        <View className="mb-10" />
+                    </ScrollView>
                 </View>
-                
-                <View className="mb-10" />
-
-                <Button
-                    title="Add Exercise to a workout session"
-                    variant="primary" 
-                    onPress={handleSubmit(handleSaveExercise)}
-                    className="w-full rounded-xl" 
-                    textClassName="text-lg font-bold text-white" 
-                />
-                <View className="mb-10" />
-                <Button
-                    title="Cancel Entry"
-                    variant="secondary"
-                    onPress={() => router.back()} 
-                    className="w-full rounded-xl py-4 border-2 border-green-500 bg-white" 
-                    textClassName="text-md font-medium text-green-700" 
-                />
-                <View className="mb-10" />
-
-            </ScrollView>
-        </View>
+            </TouchableWithoutFeedback>
+        </KeyboardAvoidingView>
     );
 }

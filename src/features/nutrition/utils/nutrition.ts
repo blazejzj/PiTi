@@ -1,4 +1,4 @@
-export const round = (n: number) => Math.round(n);
+export const round = (n: number) => Math.round(n * 10) / 10;
 
 export const fromPer100g = (
     per100: number | null | undefined,

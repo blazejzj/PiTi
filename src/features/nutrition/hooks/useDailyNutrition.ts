@@ -14,10 +14,10 @@ type DailyTotals = {
 //refactored to use the new useDailyMeals hook, which already fetches meals for today. Minimal working changes.
 // app runs fine and calculates totals based on real data now. Tested as we speak.
 
-export function useDailyNutrition(userId: string | null) {
+export function useDailyNutrition(userId: string | null, reloadKey?: number) {
     const todayISO = useMemo(() => new Date().toISOString(), []);
 
-    const { meals, loading, error } = useDailyMeals(todayISO);
+    const { meals, loading, error } = useDailyMeals(todayISO, reloadKey);
 
     const totals: DailyTotals = useMemo(() => {
         return meals.reduce(

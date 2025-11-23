@@ -62,7 +62,10 @@ const mapToViewMeal = (
     };
 };
 
-export function useDailyMeals(dateISO: string): DailyMealsState {
+export function useDailyMeals(
+    dateISO: string,
+    reloadKey?: number
+): DailyMealsState {
     const [meals, setMeals] = useState<Meal[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -114,7 +117,7 @@ export function useDailyMeals(dateISO: string): DailyMealsState {
         } finally {
             setLoading(false);
         }
-    }, [dateISO]);
+    }, [dateISO, reloadKey]);
 
     useEffect(() => {
         refresh();

@@ -8,6 +8,7 @@ import MacroPill from "../components/MacroPill";
 import { useDailyMeals } from "../hooks/useDailyMeals";
 import { useUserNutritionTargets } from "../hooks/useUserNutritionTargets";
 import { isSameDay } from "../utils/date";
+import { CalorieRing } from "../../dashboard/components/CalorieRing";
 
 const WEEKDAY_LABELS = [
     "Sun",
@@ -138,21 +139,13 @@ export default function NutritionScreen() {
                                     {selectedLabel}
                                 </Text>
 
-                                <View className="flex-row justify-between items-end mb-3">
-                                    <Text className="text-3xl font-extrabold text-neutral-900">
-                                        {totalKcal}
-                                    </Text>
-                                    <Text className="text-base font-medium text-neutral-500">
-                                        {goal > 0
-                                            ? `/ ${goal} kcal`
-                                            : "No goal set"}
-                                    </Text>
-                                </View>
-
-                                <View className="h-3 bg-neutral-200 rounded-full overflow-hidden">
-                                    <View
-                                        className="h-3 bg-green-500 rounded-full"
-                                        style={{ width: `${pct}%` }}
+                                <View className="items-center mb-4">
+                                    <CalorieRing
+                                        current={totalKcal}
+                                        target={goal}
+                                        carbs={totalCarbs}
+                                        protein={totalProtein}
+                                        fat={totalFat}
                                     />
                                 </View>
 
