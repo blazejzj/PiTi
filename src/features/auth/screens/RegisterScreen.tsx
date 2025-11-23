@@ -90,21 +90,24 @@ export default function RegisterScreen() {
         >
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                 <View className="flex-1 p-safe pt-10">
-                    <Pressable
-                        onPress={() => router.back()}
-                        className="top-12 left-4 p-2 z-10 self-start"
-                    >
-                        <Text className="font-semibold">← Go back</Text>
-                    </Pressable>
-
                     <ScrollView
                         contentContainerStyle={{
+                            paddingTop: 40,
                             padding: 24,
                             paddingBottom: 80,
                         }}
                         showsVerticalScrollIndicator={false}
                         keyboardShouldPersistTaps="handled"
                     >
+                        <View className="mb-6 right-4 bottom-5">
+                            <Pressable
+                                onPress={() => router.back()}
+                                className="top-12 left-4 p-2 z-10 self-start"
+                            >
+                                <Text className="font-semibold">← Go back</Text>
+                            </Pressable>
+                        </View>
+
                         <View className="mb-6 pt-10">
                             <Text className="font-bold text-5xl">Register</Text>
                             <Text className="text-xl mt-3 text-neutral-500">
