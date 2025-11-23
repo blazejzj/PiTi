@@ -136,10 +136,10 @@ export default function AddExerciseScreen() {
                         <View className="mb-10" />
 
                         <Button
-                            title="Add Exercise to a workout session"
+                            title="+ Add Exercise to a workout session"
                             variant="primary"
                             onPress={handleSubmit(handleSaveExercise)}
-                            className="w-full rounded-xl"
+                            className="w-full rounded-2xl shadow-md"
                             textClassName="text-lg font-bold text-white"
                         />
                         <View className="mb-10" />
@@ -147,10 +147,9 @@ export default function AddExerciseScreen() {
                             title="Cancel Entry"
                             variant="secondary"
                             onPress={() => router.back()}
-                            className="w-full rounded-xl py-4 border-2 border-green-500 bg-white"
+                            className="w-full rounded-2xl py-4 border-2 border-green-500 bg-white"
                             textClassName="text-md font-medium text-green-700"
                         />
-                        <View className="mb-10" />
                     </ScrollView>
                 </View>
             </TouchableWithoutFeedback>

@@ -162,7 +162,7 @@ export default function DashboardScreen({ profile, userId }: Props) {
                             onPress={() => router.push("/training")}
                             variant="primary"
                             className="w-full rounded-2xl py-3 px-4" 
-                            textClassName="text-base text-center"
+                            textClassName="text-base text-center text-white"
                         />
                         <Button
                             title="Log a meal"

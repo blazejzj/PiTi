@@ -212,21 +212,20 @@ export default function AddTrainingSessionScreen() {
                                 </Text>
                             )}
                         </View>
-
-                        <Pressable
+                        <View className="mb-10" />
+                        <Button
+                            title="+ Add Exercises"
+                            variant="secondary"
                             onPress={() => router.push("/training/addExercise")}
-                            className="w-full rounded-xl py-4 border-2 border-green-500 bg-white mb-10 items-center"
-                        >
-                            <Text className="text-md font-medium text-green-700">
-                                + Add Exercises / Sets
-                            </Text>
-                        </Pressable>
-
+                            className="w-full rounded-2xl border-2 border-green-500 bg-white"
+                            textClassName="text-md font-medium text-green-700"
+                        />
+                        <View className="mb-10" />
                         <Button
                             title="Save New Session"
                             variant="primary"
                             onPress={handleSubmit(handleSaveSession)}
-                            className="w-full rounded-xl"
+                            className="w-full rounded-2xl shadow-md"
                             textClassName="text-lg font-bold text-white"
                         />
                     </ScrollView>

@@ -213,8 +213,9 @@ export default function TrainingScreen() {
                 <View className="mt-6" />
                 <Button
                     title="+ Add session"
+                    variant="primary"
                     onPress={handleAddSession}
-                    className="w-full rounded-xl bg-green-600"
+                    className="w-full rounded-2xl shadow-md"
                     textClassName="text-lg font-bold text-white" 
                 />
                 <View className="mb-10" />
