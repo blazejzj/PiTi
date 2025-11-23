@@ -19,7 +19,7 @@ import { emptyProfileFormValues } from "../utils/profileUtils";
 
 export default function CreateProfileScreen() {
     const router = useRouter();
-    const { userId } = useProfile();
+    const { userId, refresh } = useProfile();
 
     const handleGoBack = () => router.back();
 
@@ -42,6 +42,7 @@ export default function CreateProfileScreen() {
                 text1: "Profile saved",
             });
 
+            await refresh();
             router.replace("/(home)/profile");
         } catch (err) {
             console.log("Error creating profile", err);
