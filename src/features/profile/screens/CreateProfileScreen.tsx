@@ -10,7 +10,6 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router";
 import Toast from "react-native-toast-message";
-
 import ProfileForm from "../components/ProfileForm";
 import { useProfile } from "../hooks/useProfile";
 import { upsertUserProfile } from "../api/profileRepo";
@@ -42,7 +41,6 @@ export default function CreateProfileScreen() {
                 text1: "Profile saved",
             });
 
-            await refresh();
             router.replace("/(home)/profile");
         } catch (err) {
             console.log("Error creating profile", err);

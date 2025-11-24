@@ -14,13 +14,6 @@ export default function DashboardContainer() {
     const router = useRouter();
     const { loading, profile, error, userId, refresh } = useProfile();
 
-    // hacky easy way to refresh when coming back to this screen. fixes bug where Dashboaard(home) is "stale" shows create your profile., but not ideal. Need to add something like profleProvider and refactor all files that use profile data, that call useProfiel hook. ?
-    useFocusEffect(
-        useCallback(() => {
-            refresh();
-        }, [refresh])
-    );
-
     const handleLogout = async () => {
         await account.deleteSession({ sessionId: "current" });
         Toast.show({ type: "success", text1: "Logged out" });
