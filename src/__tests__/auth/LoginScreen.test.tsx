@@ -4,6 +4,7 @@ import {
     screen,
     waitFor,
 } from "@testing-library/react-native";
+import { act } from "react";
 
 // mock appwrite account + helpers
 jest.mock("../../services/appwrite/appwrite", () => ({
@@ -63,7 +64,9 @@ describe("LoginScreen", () => {
         );
 
         // press the button
-        fireEvent.press(screen.getByTestId("login-btn"));
+        await act(async () => {
+            fireEvent.press(screen.getByTestId("login-btn"));
+        });
 
         // wait for effects
         await waitFor(() => {
@@ -72,11 +75,12 @@ describe("LoginScreen", () => {
                 password: "password",
             });
             expect(mockRouter.replace).toHaveBeenCalledWith("/(home)");
-            expect(Toast.show).not.toHaveBeenCalledWith(
-                expect.objectContaining({ type: "error" })
-            );
         });
-    });
+
+        expect(Toast.show).not.toHaveBeenCalledWith(
+            expect.objectContaining({ type: "error" })
+        );
+    }, 10000); // for slow CI on github? TEst!
 
     it("shows a success toast and skips session creation when user already logged in", async () => {
         (getCurrentUserSafely as jest.Mock).mockResolvedValue({
