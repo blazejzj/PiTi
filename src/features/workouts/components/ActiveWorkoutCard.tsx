@@ -1,4 +1,6 @@
-import { View, Text, Pressable } from "react-native";
+//TODO: this component we are going to work with after realse 1; not relevant for relase 1
+
+/*import { View, Text, Pressable } from "react-native";
 import { WorkoutExerciseRow } from './WorkoutExerciseRow';
 import { ActiveWorkout } from "../../../types/training";
 
@@ -43,4 +45,4 @@ export const ActiveWorkoutCard = ({name, status, duration, exercises, onTogglePa
             ))}
         </View>
     );
-};
+};*/
