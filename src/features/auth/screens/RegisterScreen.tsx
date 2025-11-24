@@ -1,5 +1,14 @@
 import { useForm } from "react-hook-form";
-import { Pressable, Text, View } from "react-native";
+import {
+    Pressable,
+    Text,
+    View,
+    ScrollView,
+    KeyboardAvoidingView,
+    Platform,
+    TouchableWithoutFeedback,
+    Keyboard,
+} from "react-native";
 import Button from "../../../components/Button";
 import { useRouter } from "expo-router";
 import FormInput from "../components/FormInput";
@@ -74,110 +83,135 @@ export default function RegisterScreen() {
     const handleGoLogin = () => router.replace("/(auth)/login");
 
     return (
-        <View className="flex-1 p-safe justify-center gap-10 p-10 bg-white">
-            <Pressable
-                onPress={() => router.back()}
-                className="absolute top-30 left-10 "
-            >
-                <Text className="font-semibold">← Go back</Text>
-            </Pressable>
-            <View className="place-self-start">
-                <Text className="font-bold text-6xl">Register</Text>
-                <Text className="text-xl mt-3 text-neutral-500">
-                    Create your new account
-                </Text>
-            </View>
-            <View className="w-full max-w-md self-center">
-                <View className="flex gap-5">
-                    <FormInput
-                        control={control}
-                        name="name"
-                        label="Full Name"
-                        placeholder="Hugh Jass"
-                        autoCapitalize="words"
-                        rules={{
-                            required: "Please enter your name",
-                            maxLength: {
-                                value: 128,
-                                message: "Max 128 characters",
-                            },
-                            validate: (val: string) =>
-                                val.trim().length > 0 ||
-                                "Please enter your name",
+        <KeyboardAvoidingView
+            className="flex-1 bg-white"
+            behavior={Platform.OS === "ios" ? "padding" : undefined}
+            keyboardVerticalOffset={Platform.OS === "ios" ? 40 : 0}
+        >
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                <View className="flex-1 p-safe pt-10">
+                    <ScrollView
+                        contentContainerStyle={{
+                            paddingTop: 40,
+                            padding: 24,
+                            paddingBottom: 80,
                         }}
-                    />
-                    <FormInput
-                        control={control}
-                        name="emailAdress"
-                        label="E-mail"
-                        placeholder="user@PiTi.com"
-                        keyboardType="email-address"
-                        autoCapitalize="none"
-                        autoCorrect={false}
-                        rules={{
-                            required: "Please enter a valid e-mail address",
-                            pattern: {
-                                // we keep it simple here, because AppWrite already has good validation,
-                                // In future we we should change this, and also validate (duh) in our own backend!!
-                                value: /\S+@\S+\.\S+/,
-                                message: "Enter a valid email",
-                            },
-                        }}
-                    />
-                    <FormInput
-                        control={control}
-                        name="password"
-                        label="Password"
-                        placeholder="********"
-                        secureTextEntry
-                        rules={{
-                            required: "Please enter a valid password",
-                            minLength: {
-                                value: 8,
-                                message: "Min 8 characters",
-                            },
-                            maxLength: {
-                                value: 128,
-                                message: "Max 128 characters",
-                            },
-                        }}
-                    />
-                    <FormInput
-                        control={control}
-                        name="confirmPassword"
-                        label="Confirm Password"
-                        placeholder="********"
-                        secureTextEntry
-                        rules={{
-                            required: "Please confirm your password",
-                            validate: (val: unknown) =>
-                                val === watch("password") ||
-                                "Passwords must match",
-                        }}
-                    />
-                </View>
+                        showsVerticalScrollIndicator={false}
+                        keyboardShouldPersistTaps="handled"
+                    >
+                        <View className="mb-6 right-4 bottom-5">
+                            <Pressable
+                                onPress={() => router.back()}
+                                className="top-12 left-4 p-2 z-10 self-start"
+                            >
+                                <Text className="font-semibold">← Go back</Text>
+                            </Pressable>
+                        </View>
 
-                <View className="flex gap-7 mt-6">
-                    <Button
-                        title={"Register"}
-                        variant="primary"
-                        onPress={handleRegister}
-                        textClassName="text-lg"
-                        className="w-full rounded-2xl py-4"
-                        testID="register-btn"
-                    />
-                    <View className="flex-row justify-center items-center">
-                        <Text className="text-lg text-neutral-700">
-                            Already have an account?
-                        </Text>
-                        <Pressable onPress={handleGoLogin}>
-                            <Text className="text-lg theme-text-color font-bold ml-2">
-                                Log in here!
+                        <View className="mb-6 pt-10">
+                            <Text className="font-bold text-5xl">Register</Text>
+                            <Text className="text-xl mt-3 text-neutral-500">
+                                Create your new account
                             </Text>
-                        </Pressable>
-                    </View>
+                        </View>
+
+                        <View className="w-full max-w-md self-center">
+                            <View className="flex gap-5">
+                                <FormInput
+                                    control={control}
+                                    name="name"
+                                    label="Full Name"
+                                    placeholder="Hugh Jass"
+                                    autoCapitalize="words"
+                                    rules={{
+                                        required: "Please enter your name",
+                                        maxLength: {
+                                            value: 128,
+                                            message: "Max 128 characters",
+                                        },
+                                        validate: (val: string) =>
+                                            val.trim().length > 0 ||
+                                            "Please enter your name",
+                                    }}
+                                />
+                                <FormInput
+                                    control={control}
+                                    name="emailAdress"
+                                    label="E-mail"
+                                    placeholder="user@PiTi.com"
+                                    keyboardType="email-address"
+                                    autoCapitalize="none"
+                                    autoCorrect={false}
+                                    rules={{
+                                        required:
+                                            "Please enter a valid e-mail address",
+                                        pattern: {
+                                            // we keep it simple here, because AppWrite already has good validation,
+                                            // In future we we should change this, and also validate (duh) in our own backend!!
+                                            value: /\S+@\S+\.\S+/,
+                                            message: "Enter a valid email",
+                                        },
+                                    }}
+                                />
+                                <FormInput
+                                    control={control}
+                                    name="password"
+                                    label="Password"
+                                    placeholder="********"
+                                    secureTextEntry
+                                    rules={{
+                                        required:
+                                            "Please enter a valid password",
+                                        minLength: {
+                                            value: 8,
+                                            message: "Min 8 characters",
+                                        },
+                                        maxLength: {
+                                            value: 128,
+                                            message: "Max 128 characters",
+                                        },
+                                    }}
+                                />
+                                <FormInput
+                                    control={control}
+                                    name="confirmPassword"
+                                    label="Confirm Password"
+                                    placeholder="********"
+                                    secureTextEntry
+                                    rules={{
+                                        required:
+                                            "Please confirm your password",
+                                        validate: (val: unknown) =>
+                                            val === watch("password") ||
+                                            "Passwords must match",
+                                    }}
+                                />
+                            </View>
+
+                            <View className="flex gap-7 mt-6">
+                                <Button
+                                    title={"Register"}
+                                    variant="primary"
+                                    onPress={handleRegister}
+                                    textClassName="text-lg"
+                                    className="w-full rounded-2xl py-4"
+                                    testID="register-btn"
+                                />
+                                <View className="flex-row justify-center items-center">
+                                    <Text className="text-lg text-neutral-700">
+                                        Already have an account?
+                                    </Text>
+                                    <Pressable onPress={handleGoLogin}>
+                                        <Text className="text-lg theme-text-color font-bold ml-2">
+                                            Log in here!
+                                        </Text>
+                                    </Pressable>
+                                </View>
+                            </View>
+                        </View>
+                    </ScrollView>
                 </View>
-            </View>
-        </View>
+            </TouchableWithoutFeedback>
+        </KeyboardAvoidingView>
     );
 }

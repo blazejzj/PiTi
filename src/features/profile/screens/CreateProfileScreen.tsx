@@ -10,7 +10,6 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router";
 import Toast from "react-native-toast-message";
-
 import ProfileForm from "../components/ProfileForm";
 import { useProfile } from "../hooks/useProfile";
 import { upsertUserProfile } from "../api/profileRepo";
@@ -19,7 +18,7 @@ import { emptyProfileFormValues } from "../utils/profileUtils";
 
 export default function CreateProfileScreen() {
     const router = useRouter();
-    const { userId } = useProfile();
+    const { userId, refresh } = useProfile();
 
     const handleGoBack = () => router.back();
 
@@ -61,13 +60,6 @@ export default function CreateProfileScreen() {
         >
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                 <View className="flex-1 p-safe pt-10">
-                    <Pressable
-                        onPress={handleGoBack}
-                        className="top-12 left-4 p-2 z-10 self-start"
-                    >
-                        <Text className="font-semibold">← Back</Text>
-                    </Pressable>
-
                     <ScrollView
                         contentContainerStyle={{
                             padding: 24,
@@ -76,6 +68,15 @@ export default function CreateProfileScreen() {
                         showsVerticalScrollIndicator={false}
                         keyboardShouldPersistTaps="handled"
                     >
+                        <View className="mb-6 right-4 bottom-8">
+                            <Pressable
+                                onPress={handleGoBack}
+                                className="top-12 left-4 p-2 z-10 self-start"
+                            >
+                                <Text className="font-semibold">← Back</Text>
+                            </Pressable>
+                        </View>
+
                         <View className="mb-6">
                             <Text className="font-bold text-3xl text-center">
                                 Setup your profile
