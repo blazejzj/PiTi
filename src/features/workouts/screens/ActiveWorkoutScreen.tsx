@@ -174,8 +174,8 @@ const ActiveWorkoutScreen = () => {
             exercise.exerciseName,
             "Choose an action:",
             [
-                { text: "Mark Completed", onPress: () => handleMarkCompleted(exercise.$id) },
-                { text: "Change/Alter Sets", onPress: () => handleChangeSets(exercise.$id) },
+                { text: "Mark as Completed", onPress: () => handleMarkCompleted(exercise.$id) },
+                { text: "Change Sets, Reps and Weight", onPress: () => handleChangeSets(exercise.$id) },
                 { text: "Remove Exercise", style: "destructive", onPress: () => handleRemoveExercise(exercise) },
                 { text: "Cancel", style: "cancel" },
             ]
@@ -255,7 +255,7 @@ const ActiveWorkoutScreen = () => {
                             <Pressable
                                 key={exercise.$id}
                                 className={`py-3 ${index < exercises.length - 1 ? 'border-b border-green-200' : ''}`}
-                                onLongPress={() => handleLongPressExercise(exercise)}
+                                onPress={() => handleLongPressExercise(exercise)}
                             >
                                 <View className="flex-row justify-between items-start">
                                     <View className="flex-1">
@@ -284,7 +284,7 @@ const ActiveWorkoutScreen = () => {
                     })}
 
                     {exercises.length === 0 && (
-                        <Text className="text-base text-neutral-500">No exercises added yet. Long-press to add/edit sets.</Text>
+                        <Text className="text-base text-neutral-500">No exercises added yet. Press to add/edit sets.</Text>
                     )}
                 </View>
 
@@ -300,9 +300,10 @@ const ActiveWorkoutScreen = () => {
                         <>
                             <Button
                                 title="Finish Workout Session"
+                                variant="primary"
                                 onPress={handleFinishWorkout}
-                                className="bg-green-600"
-                                textClassName="text-white font-bold text-lg" 
+                                className="w-full rounded-2xl py-4 px-4 mb-5"
+                                textClassName="text-base text-center text-white" 
                             />
 
                         </>
@@ -311,14 +312,13 @@ const ActiveWorkoutScreen = () => {
                 
                 {!isSessionFinished && (
                     <Button
-                        title="Go Back to Dashboard"
+                        title="Go Back to Training Dashboard"
+                        variant="secondary"
                         onPress={() => router.back()}
-                        className="mt-3 border border-gray-300 bg-white"
-                        textClassName="text-black"
+                        className="w-full rounded-2xl py-4 border-2 border-green-500 bg-white"
+                        textClassName="text-md font-medium text-green-700"
                     />
                 )}
-                
-                <View className="mb-10" />
                 </View>
             </ScrollView>
         </SafeAreaView>

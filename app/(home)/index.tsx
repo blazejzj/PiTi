@@ -12,8 +12,13 @@ import { useCallback } from "react";
 // Views stay dumb and pretty for now
 export default function DashboardContainer() {
     const router = useRouter();
-    const { loading, profile, error, userId, refresh } = useProfile();
+    const { loading, profile, error, userId,refresh } = useProfile();
 
+    useFocusEffect(
+        useCallback(() => {
+            refresh(); 
+        }, [refresh])
+    );
     const handleLogout = async () => {
         await account.deleteSession({ sessionId: "current" });
         Toast.show({ type: "success", text1: "Logged out" });

@@ -245,10 +245,10 @@ export default function EditDraftExerciseScreen() {
 
                         <View className="mt-6">
                             <Button
-                                title="Add New Set"
+                                title="+ Add New Set"
                                 variant="secondary"
                                 onPress={handleAddSet}
-                                className="w-full rounded-xl py-3 border-2 border-green-500 bg-white"
+                                className="w-full rounded-2xl py-3 border-2 border-green-500 bg-white"
                                 textClassName="text-md font-medium text-green-700"
                             />
                         </View>
@@ -258,7 +258,7 @@ export default function EditDraftExerciseScreen() {
                                 title="Done Editing Sets"
                                 variant="primary"
                                 onPress={() => router.back()}
-                                className="w-full rounded-xl"
+                                className="w-full rounded-2xl shadow-md"
                                 textClassName="text-lg font-bold text-white"
                             />
                         </View>

@@ -66,7 +66,7 @@ const SetRow = ({ set, onUpdate, onRemove }: SetRowProps) => {
                     <Pressable
                         onPress={handleSave}
                         disabled={!isDirty || isSaving}
-                        className={`p-2 rounded-md flex-row items-center justify-center ${isDirty ? 'bg-blue-600' : 'bg-gray-400'} mr-2`}
+                        className={`p-2 rounded-md flex-row items-center justify-center ${isDirty ? 'bg-green-500' : 'bg-gray-400'} mr-2`}
                     >
                         <Text className="text-white text-sm font-semibold">
                             {isSaving ? 'Saving...' : 'Save'}
