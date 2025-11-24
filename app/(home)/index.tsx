@@ -1,13 +1,11 @@
 import { View, ActivityIndicator } from "react-native";
 import { useRouter, useFocusEffect } from "expo-router";
-import { useRouter, useFocusEffect } from "expo-router";
 import Toast from "react-native-toast-message";
 import { account } from "../../src/services/appwrite/appwrite";
 import { useProfile } from "../../src/features/profile/hooks/useProfile";
 import ErrorView from "../../src/features/dashboard/screens/ErrorScreen";
 import EmptyProfileScreen from "../../src/features/dashboard/screens/EmptyProfileScreen";
 import DashboardScreen from "../../src/features/dashboard/screens/DashboardScreen";
-import { useCallback } from "react";
 import { useCallback } from "react";
 
 // Container component -> fetch stuff and decide what to render.
