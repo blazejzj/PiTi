@@ -1,28 +1,29 @@
 {
-    "expo": {
-        "name": "PiTi",
-        "slug": "PiTi",
-        "version": "1.0.0",
-        "orientation": "portrait",
-        "userInterfaceStyle": "light",
-        "newArchEnabled": true,
-        "ios": {
-            "supportsTablet": true,
-            "bundleIdentifier": "com.grouptwo.piti"
-        },
-        "android": {
-            "package": "com.grouptwo.piti",
-            "edgeToEdgeEnabled": true,
-            "predictiveBackGestureEnabled": false
-        },
-        "plugins": [
-            "expo-router",
-            [
-                "expo-camera",
-                {
-                    "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera"
-                }
-            ]
-        ]
-    }
+  "expo": {
+    "name": "PiTi",
+    "slug": "PiTi",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.grouptwo.piti"
+    },
+    "android": {
+      "package": "com.grouptwo.piti",
+      "edgeToEdgeEnabled": true,
+      "predictiveBackGestureEnabled": false
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera"
+        }
+      ],
+      "expo-font"
+    ]
+  }
 }
